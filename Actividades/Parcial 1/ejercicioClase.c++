@@ -4,35 +4,36 @@
 #include <iostream>
 #include <string.h>
 
-int ingresar(char *);
+float ingresar(char *);
 float ingresoDatos();
 float ingresoDatos(){
+    //(!((c>='0'&&c<='9')|| c=='.')&&!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')))||(((c>='0'&&c<='9')|| c=='.')&&((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')))
     
     char cad[10],c;
     int i=0;
     while((c=getch())!=13){
-        if((c>='0'&&c<='9')|| c=='.'){
+        if(!((((c>='0'&&c<='9')|| c=='.')&&((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')))||(!((c>='0'&&c<='9')|| c=='.')&&!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))))){
             printf("%c",c);
             cad[i++]=c;
         }
     }
     cad[i++]='\0';
-    //cadena
     float valor=atof(cad);
-    //int valor=atoi(cad);
     return valor;
+
+
 }
 
-int ingresar( char *msj){
+float ingresar( char *msj){
     printf("%s",msj);
-    int valor= ingresoDatos();
+    float valor= ingresoDatos();
     return valor;
 
 }
 
 int main(){
     
-    printf("\n %d\n",ingresar ("Ingrese un valor entero"));
+    printf("\n %f\n",ingresar ("Ingrese un valor entero :"));
 
 return 0;
 
