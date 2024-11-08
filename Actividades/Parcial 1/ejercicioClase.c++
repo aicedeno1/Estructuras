@@ -1,22 +1,39 @@
 #include <conio.h>
 #include <stdio.h>
 #include <stdlib.h>
-int ingresar (char *);
-int ingresar (char *msj){
-    printf("%s",msj);
+#include <iostream>
+#include <string.h>
+
+int ingresar(char *);
+float ingresoDatos();
+float ingresoDatos(){
+    
     char cad[10],c;
-    int valor, i=0;
+    int i=0;
     while((c=getch())!=13){
-        if(c>='0'&& c<='9'){
+        if((c>='0'&&c<='9')|| c=='.'){
             printf("%c",c);
             cad[i++]=c;
         }
     }
     cad[i++]='\0';
-    valor=atoi(cad);
+    //cadena
+    float valor=atof(cad);
+    //int valor=atoi(cad);
     return valor;
 }
+
+int ingresar( char *msj){
+    printf("%s",msj);
+    int valor= ingresoDatos();
+    return valor;
+
+}
+
 int main(){
-    printf("\n%d\n",ingresar("ingrese un valor entero"));
-    return 0;
+    
+    printf("\n %d\n",ingresar ("Ingrese un valor entero"));
+
+return 0;
+
 }
