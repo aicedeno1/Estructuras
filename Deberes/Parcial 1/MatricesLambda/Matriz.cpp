@@ -54,7 +54,7 @@ int** Matriz::getMatrizR() {
     return matrizR;
 }
 
-// Métodos para imprimir y liberar memoria
+
 void Matriz::imprimirMatriz(int** matriz) {
     auto imprimir = [this](int** matriz) {
         for (int i = 0; i < dim; ++i) {
@@ -74,22 +74,22 @@ void Matriz::liberarMatriz(int** matriz) {
     delete[] matriz;
 }
 
-// Sumar matrices de forma recursiva
+
 void Matriz::sumarMatricesRecursivo(int i, int j) {
-    if (i >= dim) return;  // Base case: Si hemos llegado al final de las filas, salimos
-    if (j >= dim) {  // Si hemos llegado al final de una fila, pasamos a la siguiente fila
+    if (i >= dim) return;  
+    if (j >= dim) {  
         sumarMatricesRecursivo(i + 1, 0);
         return;
     }
     
-    // Sumar los elementos correspondientes
+    
     matrizR[i][j] = matriz1[i][j] + matriz2[i][j];
     
-    // Llamada recursiva a la siguiente columna
+   
     sumarMatricesRecursivo(i, j + 1);
 }
 
-// Método para iniciar la suma
+
 void Matriz::sumarMatricesConRecursion() {
-    sumarMatricesRecursivo(0, 0);  // Comenzar desde la primera fila y primera columna
+    sumarMatricesRecursivo(0, 0);  
 }

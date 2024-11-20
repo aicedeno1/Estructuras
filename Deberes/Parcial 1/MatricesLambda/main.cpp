@@ -37,7 +37,7 @@ int main() {
     cout << "\nMatriz 2:" << endl;
     m.imprimirMatriz(matriz2);
 
-    cout << "\nMatriz Resultado (Suma de Matrices con Recursión):" << endl;
+    cout << "\nMatriz Resultado (Suma de Matrices con Recursion):" << endl;
     m.imprimirMatriz(matrizResultado);
 
     return 0;
