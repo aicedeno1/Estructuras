@@ -1,0 +1,96 @@
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+#include <cctype>
+#include <conio.h> // Necesario para getch()
+
+using namespace std;
+
+class Validaciones {
+public:
+    template <typename T>
+    T ingresar(const char *msj);
+
+private:
+    int convertirAEntero(const string& input);
+    float convertirAFloat(const string& input);
+    double convertirADouble(const string& input);
+    char convertirALetra(const string& input);
+};
+
+// Métodos para convertir los tipos de datos
+
+int Validaciones::convertirAEntero(const string& input) {
+    int valor;
+    istringstream iss(input);
+    if (!(iss >> valor)) throw invalid_argument("No es un entero válido");
+    return valor;
+}
+
+float Validaciones::convertirAFloat(const string& input) {
+    float valor;
+    istringstream iss(input);
+    if (!(iss >> valor)) throw invalid_argument("No es un flotante válido");
+    return valor;
+}
+
+double Validaciones::convertirADouble(const string& input) {
+    double valor;
+    istringstream iss(input);
+    if (!(iss >> valor)) throw invalid_argument("No es un double válido");
+    return valor;
+}
+
+char Validaciones::convertirALetra(const string& input) {
+    if (input.length() == 1 && isalpha(input[0])) {
+        return input[0];
+    }
+    throw invalid_argument("No es una letra válida");
+}
+
+// Función plantilla para ingreso de datos
+template <typename T>
+T Validaciones::ingresar(const char *msj) {
+    string input;
+
+    while (true) {
+        cout << msj;
+        input = "";  // Limpiar el input antes de empezar a leer
+
+        // Ciclo de lectura del input
+        while (true) {
+            char c = getch();  // Obtener el carácter ingresado
+
+            if constexpr (is_same<T, char>::value) {  // Solo permitir letras para el tipo char
+                if (isalpha(c)) {  // Aceptar solo letras
+                    cout << c;
+                    input += c;
+                    break;  // Termina el ciclo si se ingresa una letra
+                }
+            } else if (isdigit(c) || (c == '.' && input.find('.') == string::npos)) {  // Aceptar números y un solo punto decimal
+                cout << c;
+                input += c;
+            } 
+            else if (c == 8 && !input.empty()) {  // Manejar la tecla Backspace
+                cout << "\b \b";  // Eliminar el último carácter
+                input.pop_back();
+            } 
+            else if (c == 13 && !input.empty()) {  // Al presionar Enter, procesar el input
+                cout << endl;
+                break;
+            }
+        }
+
+        // Intentar convertir el input al tipo especificado por T
+        try {
+            if constexpr (is_same<T, int>::value) {
+                return convertirAEntero(input);
+            } 
+            else if constexpr (is_same<T, float>::value) {
+                return convertirAFloat(input);
+            } 
+            else if constexpr (is_same<T, double>::value) {
+                return convertirADouble(input);
+            } 
+            else if constexpr (is_same<T, char>::value) {
+                return convertirALetra(input

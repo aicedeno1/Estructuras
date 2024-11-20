@@ -1,0 +1,78 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Lanzar programa C++",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/output/program.exe",  // Ruta al ejecutable
+            "args": [],
+            "stopAtEntry": false,  // No detenerse en el punto de entrada
+            "cwd": "${workspaceFolder}",  // Directorio de trabajo donde están los archivos de código
+            "environment": [],
+            "externalConsole": true,  // Abrir una consola externa para la salida
+            "MIMode": "gdb",  // Especificar el depurador
+            "setupCommands": [
+                {
+                    "description": "Habilitar impresión bonita para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "miDebuggerPath": "C:/TDM-GCC-64/bin/gdb.exe",  // Ajusta la ruta de GDB según tu sistema
+            "preLaunchTask": "build all cpp files",  // Tarea de compilación previa
+            "miDebuggerArgs": "",
+            "logging": {
+                "moduleLoad": false,
+                "programOutput": true,
+                "trace": true,
+                "engineLogging": false
+            }
+        },
+        {
+            "name": "C/C++ Runner: Debug Session",
+            "type": "cppdbg",
+            "request": "launch",
+            "args": [],
+            "stopAtEntry": false,
+            "externalConsole": true,
+            "cwd": "c:/Users/vonch/OneDrive/Documents/Estructura_en_Grupo/Deberes/Parcial 1/DeberFracciones",
+            "program": "c:/Users/vonch/OneDrive/Documents/Estructura_en_Grupo/Deberes/Parcial 1/DeberFracciones/build/Debug/outDebug",
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "C/C++: gcc.exe build and debug active file",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "C:/TDM-GCC-64/bin",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:\\TDM-GCC-64\\bin\\gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc.exe build active file"
+        }
+    ]
+}
