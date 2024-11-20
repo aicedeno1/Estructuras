@@ -15,14 +15,14 @@ int main() {
     cout << "Ingrese los elementos para la Matriz 1 (3x3): " << endl;
     for (int i = 0; i < m.getDim(); ++i) {
         for (int j = 0; j < m.getDim(); ++j) {
-            matriz1[i][j] = val.ingresarEntero("Ingrese un número entero: ");
+            matriz1[i][j] = val.ingresarEntero("Ingrese un numero entero: ");
         }
     }
 
     cout << "Ingrese los elementos para la Matriz 2 (3x3): " << endl;
     for (int i = 0; i < m.getDim(); ++i) {
         for (int j = 0; j < m.getDim(); ++j) {
-            matriz2[i][j] = val.ingresarEntero("Ingrese un número entero: ");
+            matriz2[i][j] = val.ingresarEntero("Ingrese un numero entero: ");
         }
     }
 
@@ -39,7 +39,7 @@ int main() {
     cout << "\nMatriz 2:" << endl;
     m.imprimirMatriz(matriz2);
 
-    cout << "\nMatriz Resultado (Suma de Matrices con Recursión):" << endl;
+    cout << "\nMatriz Resultado :" << endl;
     m.imprimirMatriz(matrizResultado);
 
     return 0;

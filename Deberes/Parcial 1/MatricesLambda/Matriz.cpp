@@ -3,12 +3,12 @@
 
 using namespace std;
 
-// Constructor por defecto
+
 Matriz::Matriz() : dim(3) {
     inicializarMatrices();
 }
 
-// Constructor con dimensión
+
 Matriz::Matriz(int dim) : dim(dim) {
     if (dim > 3) {
         cout << "Error: La matriz no debe ser mayor a 3x3." << endl;
