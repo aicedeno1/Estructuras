@@ -1,0 +1,26 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+	  {
+		"label": "Compilar C++",
+		"type": "shell",
+		"command": "g++",
+		"args": [
+		  "-std=c++11",
+		  "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/Autor.cpp",
+		  "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/Libro.cpp",
+		  "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/Validaciones.cpp",
+		  "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/main.cpp",
+		  "-o",
+		  "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/main.exe"
+		],
+		"group": {
+		  "kind": "build",
+		  "isDefault": true
+		},
+		"problemMatcher": ["$gcc"],
+		"detail": "Compilación de C++ con GCC"
+	  }
+	]
+  }
+  
