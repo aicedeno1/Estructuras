@@ -43,19 +43,32 @@ string Validaciones::ingresar_string(const char* mensaje) {
     char cadena[100]; 
     char c;
     int i;
+    bool prev_space = false; // Para detectar espacios consecutivos
 
     while (true) {
         cout << mensaje;
         i = 0; // Reiniciar el índice en cada intento
+        prev_space = false; // Reiniciar el estado del espacio previo
 
         while ((c = _getch()) != 13) { // Enter
             if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == ' ') {
-                if (i < 99) { 
+                if (i < 99) {
+                    if (c == ' ' && prev_space) {
+                        cout << "\nNo se pueden ingresar espacios consecutivos. Intente nuevamente.\n";
+                        i = 0;  // Reiniciar la cadena
+                        break;
+                    }
+                    if (c == ' ') {
+                        prev_space = true;
+                    } else {
+                        prev_space = false;
+                    }
                     cout << c; 
                     cadena[i++] = c;
                 }
             } else if (c == 8 && i > 0) { // Backspace
                 cout << "\b \b"; 
+                prev_space = (i == 1); // Permitir espacio si es el primer carácter
                 i--;
             }
         }
@@ -115,14 +128,27 @@ string Validaciones::ingresar_string_con_mayuscula(const char* mensaje) {
     char c;
     int i;
     bool mayuscula = true;
+    bool prev_space = false; // Para detectar espacios consecutivos
 
     while (true) {
         cout << mensaje;
         i = 0; // Reiniciar el índice en cada intento
+        prev_space = false; // Reiniciar el estado del espacio previo
 
         while ((c = _getch()) != 13) { // Enter
             if (isalpha(c) || c == ' ') { // Acepta solo letras y espacio
                 if (i < 99) {
+                    if (c == ' ' && prev_space) {
+                        cout << "\nNo se pueden ingresar espacios consecutivos. Intente nuevamente.\n";
+                        i = 0;  // Reiniciar la cadena
+                        break;
+                    }
+                    if (c == ' ') {
+                        prev_space = true;
+                    } else {
+                        prev_space = false;
+                    }
+
                     if (mayuscula && isalpha(c)) {
                         c = toupper(c); // Mayúscula inicial
                         mayuscula = false; // Bloquear más mayúsculas
@@ -135,6 +161,7 @@ string Validaciones::ingresar_string_con_mayuscula(const char* mensaje) {
             } else if (c == 8 && i > 0) { // Backspace
                 cout << "\b \b"; 
                 mayuscula = (i == 1); // Permitir mayúscula si es el primer carácter
+                prev_space = (i == 1); // Permitir espacio si es el primer carácter
                 i--;
             }
         }
@@ -194,7 +221,7 @@ string Validaciones::ingresar_fecha(const char* mensaje) {
         sscanf(fecha, "%d/%d/%d", &dia, &mes, &año);
 
         if (año > 2024) {
-            cout << "El anio no puede ser mayor a 2024.\n";
+            cout << "El año no puede ser mayor a 2024. Por favor, ingrese una fecha válida en formato DD/MM/AAAA.\n";
             continue;
         }
 
@@ -202,7 +229,8 @@ string Validaciones::ingresar_fecha(const char* mensaje) {
         if (fechaValidada.esValida()) {
             return string(fecha);
         } else {
-            cout << "Fecha invalida. Por favor, intente nuevamente.\n";
+            cout << "La fecha ingresada no es válida. Asegúrese de usar el formato correcto (DD/MM/AAAA) y que la fecha sea real.\n";
+            cout << "Ejemplo: 31/12/2024.\n";
         }
     }
 }
