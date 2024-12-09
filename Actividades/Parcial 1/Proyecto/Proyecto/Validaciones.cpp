@@ -60,10 +60,16 @@ string Validaciones::ingresar_string(const char* mensaje) {
             }
         }
 
-        if (i == 0) { // Si no se ingresó nada
+        if (i == 0) { // Si no se ingresó nada o solo espacios
             cout << "\nEl campo no puede estar vacio. Intente nuevamente.\n";
         } else {
-            break;
+            // Validación de que no haya solo espacios
+            string str(cadena);
+            if (str.find_first_not_of(" ") == string::npos) {
+                cout << "\nEl campo no puede contener solo espacios. Intente nuevamente.\n";
+            } else {
+                break;
+            }
         }
     }
 
@@ -133,10 +139,16 @@ string Validaciones::ingresar_string_con_mayuscula(const char* mensaje) {
             }
         }
 
-        if (i == 0) { // Si no se ingresó nada
+        if (i == 0) { // Si no se ingresó nada o solo espacios
             cout << "\nEl campo no puede estar vacio. Intente nuevamente.\n";
         } else {
-            break;
+            // Validación de que no haya solo espacios
+            string str(cadena);
+            if (str.find_first_not_of(" ") == string::npos) {
+                cout << "\nEl campo no puede contener solo espacios. Intente nuevamente.\n";
+            } else {
+                break;
+            }
         }
     }
 
