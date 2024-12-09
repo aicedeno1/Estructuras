@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include "Fecha.h"
 
 class Autor {
 private:
@@ -16,6 +17,10 @@ public:
     // Métodos
     std::string obtenerNombreCompleto() const;
     bool operator==(const Autor& other) const;
+
+    // Getters
+    std::string getNombre() const;
+    std::string getApellido() const;
 };
 
 #endif

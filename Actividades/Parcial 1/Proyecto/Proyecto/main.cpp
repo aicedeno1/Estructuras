@@ -1,9 +1,10 @@
 #include <iostream>
-#include <conio.h>  // Para _getch()
-#include <windows.h> // Para cambiar colores en la consola
+#include <conio.h>
+#include <windows.h>
 #include "ListaCircularDoble.h"
 #include "Autor.h"
 #include "Libro.h"
+#include "Fecha.h"
 #include "Validaciones.h"
 
 using namespace std;
@@ -69,19 +70,39 @@ void mostrarMenu(int opcionSeleccionada, const string opciones[], int numOpcione
 void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autores, ListaCircularDoble<Libro>& libros) {
     switch (opcionSeleccionada) {
         case 0: { // Ingresar libro
-            string titulo, nombre, apellido;
+            string titulo, nombre, apellido, editorial;
+            int dia, mes, año;
 
+            // Ingresar los datos
             if (!ingresarDatoValido("Titulo del libro: ", titulo)) break;
             if (!ingresarDatoValido("Nombre del autor: ", nombre)) break;
             if (!ingresarDatoValido("Apellido del autor: ", apellido)) break;
 
+            cout << "Fecha de publicación (DD MM AAAA): ";
+            cin >> dia >> mes >> año;
+
+            // Validamos la fecha antes de continuar
+            Fecha fechaPublicacion(dia, mes, año);
+            if (!fechaPublicacion.esValida()) {
+                cout << "Fecha inválida. Intente nuevamente.\n";
+                break;
+            }
+
+            cin.ignore();  // Limpiar el buffer de entrada
+
+            cout << "Editorial: ";
+            getline(cin, editorial);
+
+            // Creando el autor correctamente
             Autor autor(nombre, apellido);
             if (!autores.existe(autor, [](const Autor& a, const Autor& b) { return a == b; })) {
                 autores.agregar(autor);
             } else {
                 cout << "Este autor ya existe en la lista.\n";
             }
-            libros.agregar(Libro(titulo, autor));
+
+            // Agregando el libro con el autor
+            libros.agregar(Libro(titulo, autor, fechaPublicacion, editorial));
             cout << "Libro agregado exitosamente.\n";
             break;
         }
@@ -151,6 +172,6 @@ void buscarPorConsulta(const ListaCircularDoble<Autor>& autores, const ListaCirc
     });
 
     if (!encontrado) {
-        cout << "No se encontraron coincidencias para: " << consulta << endl;
+        cout << "No se encontró el autor o libro.\n";
     }
 }

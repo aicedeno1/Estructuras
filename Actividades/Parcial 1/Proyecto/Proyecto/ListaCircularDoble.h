@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include <functional>
+#include "Fecha.h"
 
-// Clase Nodo
 template <typename T>
 class Nodo {
 public:
@@ -15,7 +15,6 @@ public:
     Nodo(const T& valor) : dato(valor), siguiente(nullptr), anterior(nullptr) {}
 };
 
-// Clase ListaCircularDoble
 template <typename T>
 class ListaCircularDoble {
 private:
@@ -26,17 +25,14 @@ public:
     ~ListaCircularDoble() { limpiar(); }
 
     void agregar(const T& elemento);
+    bool eliminar(const std::string& criterio, bool porCodigo);
     
     template <typename U, typename F>
     bool existe(const U& elemento, F comparador) const;
     
     void imprimir(const std::function<void(const T&)>& accion) const;
     void limpiar();
-
-    // Otros métodos según necesidad
 };
-
-// Implementaciones de los métodos
 
 template <typename T>
 void ListaCircularDoble<T>::agregar(const T& elemento) {
@@ -55,11 +51,48 @@ void ListaCircularDoble<T>::agregar(const T& elemento) {
 }
 
 template <typename T>
-template <typename U, typename F>
-bool ListaCircularDoble<T>::existe(const U& elemento, F comparador) const {
+bool ListaCircularDoble<T>::eliminar(const std::string& criterio, bool porCodigo) {
     if (!cabeza) return false;
 
     Nodo<T>* actual = cabeza;
+    Nodo<T>* anterior = nullptr;
+
+    do {
+        if (porCodigo && actual->dato.obtenerCodigo() == criterio) {
+            if (anterior) {
+                anterior->siguiente = actual->siguiente;
+                actual->siguiente->anterior = anterior;
+            } else {
+                cabeza = actual->siguiente;
+                cabeza->anterior = actual->anterior;
+            }
+            delete actual;
+            return true;
+        } else if (!porCodigo && actual->dato.obtenerInformacion().find(criterio) != std::string::npos) {
+            if (anterior) {
+                anterior->siguiente = actual->siguiente;
+                actual->siguiente->anterior = anterior;
+            } else {
+                cabeza = actual->siguiente;
+                cabeza->anterior = actual->anterior;
+            }
+            delete actual;
+            return true;
+        }
+
+        anterior = actual;
+        actual = actual->siguiente;
+    } while (actual != cabeza);
+
+    return false;
+}
+
+template <typename T>
+template <typename U, typename F>
+bool ListaCircularDoble<T>::existe(const U& elemento, F comparador) const {
+    Nodo<T>* actual = cabeza;
+    if (!actual) return false;
+
     do {
         if (comparador(actual->dato, elemento)) {
             return true;
@@ -72,12 +105,9 @@ bool ListaCircularDoble<T>::existe(const U& elemento, F comparador) const {
 
 template <typename T>
 void ListaCircularDoble<T>::imprimir(const std::function<void(const T&)>& accion) const {
-    if (!cabeza) {
-        std::cout << "La lista está vacía." << std::endl;
-        return;
-    }
-
     Nodo<T>* actual = cabeza;
+    if (!actual) return;
+
     do {
         accion(actual->dato);
         actual = actual->siguiente;
@@ -95,7 +125,7 @@ void ListaCircularDoble<T>::limpiar() {
         actual = siguiente;
     } while (actual != cabeza);
 
-    cabeza = nullptr;  // Aseguramos que 'cabeza' sea nulo después de limpiar la lista
+    cabeza = nullptr;
 }
 
 #endif

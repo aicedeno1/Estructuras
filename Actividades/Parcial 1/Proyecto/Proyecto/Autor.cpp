@@ -13,3 +13,12 @@ std::string Autor::obtenerNombreCompleto() const {
 bool Autor::operator==(const Autor& other) const {
     return nombre == other.nombre && apellido == other.apellido;
 }
+
+// Getters
+std::string Autor::getNombre() const {
+    return nombre;
+}
+
+std::string Autor::getApellido() const {
+    return apellido;
+}
