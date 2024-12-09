@@ -1,0 +1,6 @@
+AUTORES
+AUTOR|c|d
+AUTOR|pepe|cedeno
+LIBROS
+LIBRO|2|d|c|d|10/07/2004|a
+LIBRO|3|paz|pepe|cedeno|10/07/2004|flash

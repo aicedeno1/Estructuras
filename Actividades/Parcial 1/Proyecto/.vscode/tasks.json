@@ -7,12 +7,14 @@
 		"command": "g++",
 		"args": [
 		  "-std=c++11",
-		  "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/Autor.cpp",
-		  "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/Libro.cpp",
-		  "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/Validaciones.cpp",
-		  "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/main.cpp",
+		  "-Wall",
+		  "-Wextra",
+		  "${workspaceFolder}/Proyecto/Autor.cpp",
+		  "${workspaceFolder}/Proyecto/Libro.cpp",
+		  "${workspaceFolder}/Proyecto/Validaciones.cpp",
+		  "${workspaceFolder}/Proyecto/main.cpp",
 		  "-o",
-		  "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/main.exe"
+		  "${workspaceFolder}/Proyecto/output/main.exe"
 		],
 		"group": {
 		  "kind": "build",

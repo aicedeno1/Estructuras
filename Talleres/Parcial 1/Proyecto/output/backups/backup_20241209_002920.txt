@@ -1,0 +1,8 @@
+AUTORES
+AUTOR|b|c
+AUTOR|w|e
+AUTOR|i|o
+LIBROS
+LIBRO|1|a|b|c|10/10/1000|s
+LIBRO|2|q|w|e|10/10/1000|r
+LIBRO|3|u|i|o|10/10/1000|p

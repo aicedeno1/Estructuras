@@ -1,0 +1,6 @@
+AUTORES
+AUTOR|pepe|cedeno
+AUTOR|salo|calo
+LIBROS
+LIBRO|2|paz|pepe|cedeno|10/07/2004|flash
+LIBRO|3|paz|salo|calo|10/07/1998|fall

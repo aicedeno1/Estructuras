@@ -1,0 +1,5 @@
+AUTORES
+AUTOR|b|c
+LIBROS
+LIBRO|1|a|b|c|10/12/2000|d
+LIBRO|2|a|b|c|12/10/2003|d
