@@ -1,26 +1,28 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-      {
-        "label": "Compilar C++",
-        "type": "shell",
-        "command": "g++",
-        "args": [
-          "-std=c++11",
-          "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/Autor.cpp",
-          "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/Libro.cpp",
-          "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/Validaciones.cpp",
-          "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/main.cpp",
-          "-o",
-          "C:/Users/vonch/Estructuras/Actividades/Parcial 1/Proyecto/main.exe"
-        ],
-        "group": {
-          "kind": "build",
-          "isDefault": true
-        },
-        "problemMatcher": ["$gcc"],
-        "detail": "Compilación de C++ con GCC"
-      }
-    ]
-  }
-  
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "C/C++: g++.exe build active file",
+			"command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-g",
+				"${file}",
+				"-o",
+				"${fileDirname}\\${fileBasenameNoExtension}.exe"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "compiler: C:\\msys64\\ucrt64\\bin\\g++.exe"
+		}
+	]
+}

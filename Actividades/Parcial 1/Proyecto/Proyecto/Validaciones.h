@@ -5,20 +5,11 @@
 
 class Validaciones {
 public:
-    // Convierte la cadena a minúsculas
-    static std::string convertirMinusculas(const std::string& cadena);
-    
-    // Elimina los espacios en blanco de una cadena
-    static std::string eliminarEspacios(const std::string& cadena);
-
-    // Valida que la cadena contenga solo letras y espacios
-    static bool esCadenaValida(const std::string& cadena);
-
-    // Valida que la cadena contenga solo números
-    static bool esNumeroValido(const std::string& numero);
-
-    // Valida si la fecha es correcta
-    static bool esFechaValida(int dia, int mes, int año);
+    static int ingresar_entero(const char* mensaje);
+    static std::string ingresar_string(const char* mensaje);
+    static std::string ingresar_cedula(const char* mensaje);
+    static std::string ingresar_string_con_mayuscula(const char* mensaje); // Nueva función
+    static std::string ingresar_fecha(const char* mensaje);               // Nueva función
 };
 
 #endif
