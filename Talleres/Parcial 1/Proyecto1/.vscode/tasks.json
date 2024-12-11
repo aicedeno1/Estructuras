@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++.exe build active file",
+            "command": "C:\\TDM-GCC-64\\bin\\g++.exe",
+            "args": [
+                "-Wall",
+                "-Wextra",
+                "-g3",
+                "${workspaceFolder}\\main.cpp",
+                "${workspaceFolder}\\Autor.cpp",
+                "${workspaceFolder}\\Libro.cpp",
+                "${workspaceFolder}\\Fecha.cpp",
+                "${workspaceFolder}\\Validaciones.cpp",
+                "${workspaceFolder}\\BackupManager.cpp",
+                "-o",
+                "${workspaceFolder}\\output\\main.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "compiler: C:\\TDM-GCC-64\\bin\\g++.exe"
+        }
+    ]
+}
+  
