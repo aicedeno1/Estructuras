@@ -184,27 +184,36 @@ string Validaciones::ingresar_string_con_mayuscula(const char* mensaje) {
     return string(cadena);
 }
 
-string Validaciones::ingresar_fecha(const char* mensaje) {
-    char fecha[11]; // DD/MM/AAAA
+
+string Validaciones::ingresar_fecha(const char* mensaje, int anioMinimo, const string& fechaReferencia) {
+    char fecha[11]; // Formato DD/MM/AAAA
     char c;
     int i;
 
+    // Obtener la fecha actual
+    time_t t = time(nullptr);
+    tm* fechaActual = localtime(&t);
+    int anioActual = fechaActual->tm_year + 1900;
+    int mesActual = fechaActual->tm_mon + 1;
+    int diaActual = fechaActual->tm_mday;
+
     while (true) {
-        i = 0; // Reiniciar el índice en cada intento
+        i = 0;
         cout << mensaje;
 
+        // Entrada de fecha
         while (true) {
-            c = _getch(); // Obtener un carácter
+            c = _getch();
 
             if ((c >= '0' && c <= '9') || c == '/') {
-                if (i < 10) { 
-                    cout << c; 
-                    fecha[i++] = c; 
+                if (i < 10) {
+                    cout << c;
+                    fecha[i++] = c;
                 }
             } else if (c == 8 && i > 0) { // Backspace
-                cout << "\b \b"; 
+                cout << "\b \b";
                 i--;
-            } else if (c == 13 && i == 10) { // Enter
+            } else if (c == 13 && i == 10) { // Enter con entrada completa
                 break;
             } else if (c == 13 && i == 0) { // Enter sin entrada
                 cout << "\nEl campo no puede estar vacio. Intente nuevamente.\n";
@@ -214,23 +223,123 @@ string Validaciones::ingresar_fecha(const char* mensaje) {
 
         if (i == 0) continue;
 
-        fecha[i] = '\0'; 
+        fecha[i] = '\0';
         cout << endl;
 
-        int dia, mes, año;
-        sscanf(fecha, "%d/%d/%d", &dia, &mes, &año);
-
-        if (año > 2024) {
-            cout << "El año no puede ser mayor a 2024. Por favor, ingrese una fecha válida en formato DD/MM/AAAA.\n";
+        int dia, mes, anio;
+        if (sscanf(fecha, "%d/%d/%d", &dia, &mes, &anio) != 3) {
+            cout << "Formato de fecha invalido. Use DD/MM/AAAA.\n";
             continue;
         }
 
-        Fecha fechaValidada(dia, mes, año);
-        if (fechaValidada.esValida()) {
-            return string(fecha);
-        } else {
-            cout << "La fecha ingresada no es válida. Asegúrese de usar el formato correcto (DD/MM/AAAA) y que la fecha sea real.\n";
-            cout << "Ejemplo: 31/12/2024.\n";
+        // Validación básica de fecha
+        if (anio < anioMinimo) {
+            cout << "El anio debe ser mayor o igual a " << anioMinimo << ". Intente nuevamente.\n";
+            continue;
         }
+        if (anio > anioActual) {
+            cout << "El anio no puede ser mayor al actual (" << anioActual << "). Intente nuevamente.\n";
+            continue;
+        }
+        if (mes < 1 || mes > 12) {
+            cout << "El mes debe estar entre 1 y 12. Intente nuevamente.\n";
+            continue;
+        }
+        if (dia < 1 || dia > 31) {
+            cout << "El dia debe estar entre 1 y 31. Intente nuevamente.\n";
+            continue;
+        }
+
+        // Validación de días según el mes
+        int diasEnMes[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        if (anio % 4 == 0 && (anio % 100 != 0 || anio % 400 == 0)) {
+            diasEnMes[1] = 29; // Año bisiesto
+        }
+        if (dia > diasEnMes[mes - 1]) {
+            cout << "El mes " << mes << " solo tiene " << diasEnMes[mes - 1] << " dias.\n";
+            continue;
+        }
+
+        // Validar que la fecha no sea futura
+        if (anio == anioActual) {
+            if (mes > mesActual || (mes == mesActual && dia > diaActual)) {
+                cout << "La fecha no puede ser futura. Intente nuevamente.\n";
+                continue;
+            }
+        }
+
+        // Si hay fecha de referencia, validar que la fecha ingresada no sea anterior
+        if (!fechaReferencia.empty() && esFechaMenor(fecha, fechaReferencia)) {
+            cout << "La fecha no puede ser anterior a " << fechaReferencia << ". Intente nuevamente.\n";
+            continue;
+        }
+
+        // Si todas las validaciones pasan, la fecha es válida
+        return string(fecha);
     }
+}
+
+
+bool Validaciones::validar_edad(int diaNacimiento, int mesNacimiento, int anioNacimiento) {
+    // Obtener la fecha actual
+    time_t t = time(nullptr);
+    tm* fechaActual = localtime(&t);
+    int anioActual = fechaActual->tm_year + 1900;
+    int mesActual = fechaActual->tm_mon + 1;
+    int diaActual = fechaActual->tm_mday;
+
+    // Calcular edad
+    int edad = anioActual - anioNacimiento;
+
+    if (mesNacimiento > mesActual || (mesNacimiento == mesActual && diaNacimiento > diaActual)) {
+        edad--; // Restar un año si el cumpleaños aún no ha pasado este año
+    }
+
+    // Verificar si la edad es mayor o igual a 18 años
+    return edad >= 18;
+}
+
+void Validaciones::ingresar_fecha_autor(const char* mensaje) {
+    char fecha[11]; // Formato DD/MM/AAAA
+    int dia, mes, anio;
+
+    while (true) {
+        cout << mensaje;
+        cin.getline(fecha, 11);
+
+        // Extraer día, mes y año de la cadena ingresada
+        if (sscanf(fecha, "%d/%d/%d", &dia, &mes, &anio) == 3) {
+            if (anio >= 1900 && mes >= 1 && mes <= 12 && dia >= 1 && dia <= 31) {
+                if (validar_edad(dia, mes, anio)) {
+                    cout << "La edad del autor es valida (mayor de 18 anios).\n";
+                    break;
+                } else {
+                    cout << "El autor debe tener al menos 18 anios. Intente nuevamente.\n";
+                }
+            } else {
+                cout << "Fecha invalida. Asegurese de que este en el formato DD/MM/AAAA y sea valida.\n";
+            }
+        } else {
+            cout << "Formato incorrecto. Ingrese la fecha en el formato DD/MM/AAAA.\n";
+      } 
+ }
+}
+bool Validaciones::esFechaMenor(const string& fecha1, const string& fecha2) {
+    int dia1, mes1, anio1, dia2, mes2, anio2;
+    sscanf(fecha1.c_str(), "%d/%d/%d", &dia1, &mes1, &anio1);
+    sscanf(fecha2.c_str(), "%d/%d/%d", &dia2, &mes2, &anio2);
+    
+    if (anio1 < anio2) return true;
+    if (anio1 > anio2) return false;
+    if (mes1 < mes2) return true;
+    if (mes1 > mes2) return false;
+    return dia1 < dia2;
+}
+string Validaciones::ingresar_fecha_nacimiento_autor(const char* mensaje) {
+    return ingresar_fecha(mensaje, 1800); // Permitimos fechas desde 1800
+}
+
+string Validaciones::ingresar_fecha_publicacion(const char* mensaje, const string& fechaNacimientoAutor) {
+    // La fecha de publicación debe ser posterior a la fecha de nacimiento del autor
+    return ingresar_fecha(mensaje, 1800, fechaNacimientoAutor);
 }

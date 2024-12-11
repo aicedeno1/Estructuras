@@ -15,6 +15,7 @@
                 "${workspaceFolder}\\Fecha.cpp",
                 "${workspaceFolder}\\Validaciones.cpp",
                 "${workspaceFolder}\\BackupManager.cpp",
+                "${workspaceFolder}\\FiltroManager.cpp",
                 "-o",
                 "${workspaceFolder}\\output\\main.exe"
             ],

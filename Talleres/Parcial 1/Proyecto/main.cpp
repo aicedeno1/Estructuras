@@ -7,6 +7,7 @@
 #include "Fecha.h"
 #include "Validaciones.h"
 #include "BackupManager.h"
+#include "FiltroManager.h"
 
 using namespace std;
 
@@ -27,12 +28,13 @@ void menu() {
     ListaCircularDoble<Autor> autores;
     ListaCircularDoble<Libro> libros;
 
-    const int numOpciones = 7;
+    const int numOpciones = 8;
     string opciones[numOpciones] = {
         "Ingresar libro",
         "Mostrar autores y libros",
         "Buscar por autor o libro",
         "Eliminar libro",
+        "Filtrar libros por fecha",
         "Crear backup",
         "Restaurar backup",
         "Salir"
@@ -46,9 +48,10 @@ void menu() {
         if (tecla == 13) { // Enter
             system("cls");
             procesarSeleccion(opcionSeleccionada, autores, libros);
-            if (opcionSeleccionada == 6) { // Salir
+            if (opcionSeleccionada == 7) { // Salir
                 break;
             }
+            system("pause");
         } else if (tecla == -32) { // Teclas especiales
             tecla = _getch();
             if (tecla == 72) { // Arriba
@@ -79,6 +82,7 @@ void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autore
     switch (opcionSeleccionada) {
         case 0: { // Ingresar libro
             string titulo, nombre, apellido, editorial;
+            int dia, mes, anio;
 
             // Validaciones con mayúsculas
             titulo = Validaciones::ingresar_string_con_mayuscula("Titulo del libro: ");
@@ -87,18 +91,20 @@ void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autore
             editorial = Validaciones::ingresar_string_con_mayuscula("Editorial: ");
 
             // Verificar si el autor ya existe
-            string fechaNacTemp = "01/01/2000"; // Fecha temporal para la búsqueda
-            int d, m, a;
-            sscanf(fechaNacTemp.c_str(), "%d/%d/%d", &d, &m, &a);
-            Autor autorTemp(nombre, apellido, Fecha(d, m, a));
+            Autor autorTemp(nombre, apellido, Fecha(1, 1, 1900)); // Fecha temporal
             bool autorExistente = autores.existe(autorTemp, [](const Autor& a, const Autor& b) { return a == b; });
 
+            string fechaNacimiento;
+            Fecha fechaNacimientoAutor(1, 1, 1900);
             Autor autor = autorTemp;
+
             if (!autorExistente) {
                 // Validación de la fecha de nacimiento del autor si no existe
-                string fechaNacimiento = Validaciones::ingresar_fecha("Fecha de nacimiento del autor (DD/MM/AAAA): ");
-                sscanf(fechaNacimiento.c_str(), "%d/%d/%d", &d, &m, &a);
-                Fecha fechaNacimientoAutor(d, m, a);
+                fechaNacimiento = Validaciones::ingresar_fecha_nacimiento_autor(
+                    "Fecha de nacimiento del autor (DD/MM/AAAA): "
+                );
+                sscanf(fechaNacimiento.c_str(), "%d/%d/%d", &dia, &mes, &anio);
+                fechaNacimientoAutor = Fecha(dia, mes, anio);
 
                 if (!fechaNacimientoAutor.esValida()) {
                     cout << "Fecha de nacimiento invalida.\n";
@@ -107,11 +113,17 @@ void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autore
 
                 autor = Autor(nombre, apellido, fechaNacimientoAutor);
                 autores.agregar(autor);
+            } else {
+                // Obtener la fecha de nacimiento del autor existente
+                fechaNacimiento = autor.obtenerFechaNacimiento();
             }
 
             // Validación de la fecha de publicación del libro
-            string fechaPublicacionStr = Validaciones::ingresar_fecha("Fecha de publicacion (DD/MM/AAAA): ");
-            int dia, mes, anio;
+            string fechaPublicacionStr = Validaciones::ingresar_fecha_publicacion(
+                "Fecha de publicacion (DD/MM/AAAA): ",
+                fechaNacimiento
+            );
+
             sscanf(fechaPublicacionStr.c_str(), "%d/%d/%d", &dia, &mes, &anio);
             Fecha fechaPublicacion(dia, mes, anio);
 
@@ -175,17 +187,19 @@ void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autore
             }
             break;
         }
-        case 4: // Crear backup
+        case 4: // Filtrar libros por fecha
+            FiltroManager::filtrarLibrosPorFecha(libros);
+            break;
+        case 5: // Crear backup
             realizarBackup(autores, libros);
             break;
-        case 5: // Restaurar backup
+        case 6: // Restaurar backup
             restaurarBackup(autores, libros);
             break;
-        case 6: // Salir
+        case 7: // Salir
             cout << "Saliendo del programa...\n";
             break;
     }
-    system("pause");
 }
 
 void realizarBackup(const ListaCircularDoble<Autor>& autores, const ListaCircularDoble<Libro>& libros) {
