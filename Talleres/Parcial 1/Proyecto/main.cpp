@@ -8,16 +8,17 @@
 #include "Validaciones.h"
 #include "BackupManager.h"
 #include "FiltroManager.h"
+#include "LogManager.h" // Agregamos la cabecera del LogManager
 
 using namespace std;
 
 // Prototipos de funciones
 void menu();
 void mostrarMenu(int opcionSeleccionada, const string opciones[], int numOpciones);
-void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autores, ListaCircularDoble<Libro>& libros);
+void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autores, ListaCircularDoble<Libro>& libros, LogManager& logManager);
 void cambiarColor(int color);
-void realizarBackup(const ListaCircularDoble<Autor>& autores, const ListaCircularDoble<Libro>& libros);
-void restaurarBackup(ListaCircularDoble<Autor>& autores, ListaCircularDoble<Libro>& libros);
+void realizarBackup(const ListaCircularDoble<Autor>& autores, const ListaCircularDoble<Libro>& libros, LogManager& logManager);
+void restaurarBackup(ListaCircularDoble<Autor>& autores, ListaCircularDoble<Libro>& libros, LogManager& logManager);
 
 int main() {
     menu();
@@ -27,8 +28,9 @@ int main() {
 void menu() {
     ListaCircularDoble<Autor> autores;
     ListaCircularDoble<Libro> libros;
+    LogManager logManager("biblioteca_log.txt"); // Instancia del LogManager
 
-    const int numOpciones = 8;
+    const int numOpciones = 9;
     string opciones[numOpciones] = {
         "Ingresar libro",
         "Mostrar autores y libros",
@@ -37,6 +39,7 @@ void menu() {
         "Filtrar libros por fecha",
         "Crear backup",
         "Restaurar backup",
+        "Mostrar registro de eventos",
         "Salir"
     };
     int opcionSeleccionada = 0;
@@ -47,8 +50,8 @@ void menu() {
 
         if (tecla == 13) { // Enter
             system("cls");
-            procesarSeleccion(opcionSeleccionada, autores, libros);
-            if (opcionSeleccionada == 7) { // Salir
+            procesarSeleccion(opcionSeleccionada, autores, libros, logManager);
+            if (opcionSeleccionada == 8) { // Salir
                 break;
             }
             system("pause");
@@ -78,7 +81,7 @@ void mostrarMenu(int opcionSeleccionada, const string opciones[], int numOpcione
     }
 }
 
-void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autores, ListaCircularDoble<Libro>& libros) {
+void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autores, ListaCircularDoble<Libro>& libros, LogManager& logManager) {
     switch (opcionSeleccionada) {
         case 0: { // Ingresar libro
             string titulo, nombre, apellido, editorial;
@@ -113,9 +116,6 @@ void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autore
 
                 autor = Autor(nombre, apellido, fechaNacimientoAutor);
                 autores.agregar(autor);
-            } else {
-                // Obtener la fecha de nacimiento del autor existente
-                fechaNacimiento = autor.obtenerFechaNacimiento();
             }
 
             // Validación de la fecha de publicación del libro
@@ -135,6 +135,7 @@ void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autore
             // Agregar el libro
             libros.agregar(Libro(titulo, autor, fechaPublicacion, editorial));
             cout << "Libro agregado exitosamente.\n";
+            logManager.escribirLog("Libro agregado: " + titulo);
             break;
         }
         case 1: // Mostrar autores y libros
@@ -148,13 +149,14 @@ void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autore
             libros.imprimir([](const Libro& libro) {
                 cout << libro.obtenerInformacion() << endl;
             });
+            logManager.escribirLog("Mostrando autores y libros.");
             break;
 
         case 2: { // Buscar por autor o libro
             string consulta = Validaciones::ingresar_string_con_mayuscula("Ingrese el autor o libro que desea buscar: ");
-            
+
             cout << "\nResultados de búsqueda para: " << consulta << "\n\n";
-            
+
             cout << "Autores encontrados:\n";
             bool encontrado = false;
             autores.imprimir([&](const Autor& autor) {
@@ -176,12 +178,14 @@ void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autore
             if (!encontrado) {
                 cout << "No se encontraron coincidencias.\n";
             }
+            logManager.escribirLog("Busqueda realizada: " + consulta);
             break;
         }
         case 3: { // Eliminar libro
             string codigo = to_string(Validaciones::ingresar_entero("Ingrese el codigo del libro a eliminar: "));
             if (libros.eliminarPorCodigo(codigo)) {
                 cout << "Libro eliminado exitosamente.\n";
+                logManager.escribirLog("Libro eliminado: Codigo " + codigo);
             } else {
                 cout << "No se encontro un libro con el codigo especificado.\n";
             }
@@ -189,34 +193,42 @@ void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autore
         }
         case 4: // Filtrar libros por fecha
             FiltroManager::filtrarLibrosPorFecha(libros);
+            logManager.escribirLog("Filtro aplicado a libros por fecha.");
             break;
         case 5: // Crear backup
-            realizarBackup(autores, libros);
+            realizarBackup(autores, libros, logManager);
             break;
         case 6: // Restaurar backup
-            restaurarBackup(autores, libros);
+            restaurarBackup(autores, libros, logManager);
             break;
-        case 7: // Salir
+        case 7: // Mostrar registro de eventos
+            logManager.mostrarLog();
+            break;
+        case 8: // Salir
             cout << "Saliendo del programa...\n";
+            logManager.escribirLog("El programa ha finalizado.");
             break;
     }
 }
 
-void realizarBackup(const ListaCircularDoble<Autor>& autores, const ListaCircularDoble<Libro>& libros) {
+void realizarBackup(const ListaCircularDoble<Autor>& autores, const ListaCircularDoble<Libro>& libros, LogManager& logManager) {
     BackupManager backupManager;
     if (backupManager.crearBackup(libros, autores)) {
         cout << "Backup creado exitosamente.\n";
+        logManager.escribirLog("Backup creado exitosamente.");
     } else {
         cout << "Error al crear el backup.\n";
+        logManager.escribirLog("Error al crear el backup.");
     }
 }
 
-void restaurarBackup(ListaCircularDoble<Autor>& autores, ListaCircularDoble<Libro>& libros) {
+void restaurarBackup(ListaCircularDoble<Autor>& autores, ListaCircularDoble<Libro>& libros, LogManager& logManager) {
     BackupManager backupManager;
     auto backups = backupManager.obtenerListaBackups();
-    
+
     if (backups.empty()) {
         cout << "No hay backups disponibles.\n";
+        logManager.escribirLog("No hay backups disponibles para restaurar.");
         return;
     }
 
@@ -232,13 +244,17 @@ void restaurarBackup(ListaCircularDoble<Autor>& autores, ListaCircularDoble<Libr
     if (opcion > 0 && opcion <= static_cast<int>(backups.size())) {
         if (backupManager.restaurarBackup(backups[opcion-1].timestamp, libros, autores)) {
             cout << "Backup restaurado exitosamente.\n";
+            logManager.escribirLog("Backup restaurado: " + backups[opcion-1].timestamp);
         } else {
             cout << "Error al restaurar el backup.\n";
+            logManager.escribirLog("Error al restaurar el backup: " + backups[opcion-1].timestamp);
         }
     } else if (opcion != 0) {
         cout << "Opcion invalida.\n";
+        logManager.escribirLog("Intento fallido de restaurar backup. Opcion invalida seleccionada.");
     }
 }
+
 
 void cambiarColor(int color) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
