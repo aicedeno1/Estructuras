@@ -1,1 +1,13 @@
 [2024-12-17 22:34:47] Libro agregado: Si papi si
+[2024-12-18 10:07:22] Mostrando autores y libros.
+[2024-12-18 10:08:18] Libro agregado: Sauce
+[2024-12-18 10:08:21] Mostrando autores y libros.
+[2024-12-18 10:08:49] Libro agregado: Lifilo
+[2024-12-18 10:09:08] Libros ordenados por título.
+[2024-12-18 10:09:15] Mostrando autores y libros.
+[2024-12-18 10:14:54] Libro agregado: Stiven
+[2024-12-18 10:15:10] Libro agregado: Arboleda
+[2024-12-18 10:15:17] Libros ordenados por título.
+[2024-12-18 10:18:51] Libros ordenados por título.
+[2024-12-18 10:20:47] Libro agregado: El principito
+[2024-12-18 10:20:50] Libros ordenados por título.

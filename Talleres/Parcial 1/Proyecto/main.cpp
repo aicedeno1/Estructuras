@@ -19,6 +19,7 @@ void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autore
 void cambiarColor(int color);
 void realizarBackup(const ListaCircularDoble<Autor>& autores, const ListaCircularDoble<Libro>& libros, LogManager& logManager);
 void restaurarBackup(ListaCircularDoble<Autor>& autores, ListaCircularDoble<Libro>& libros, LogManager& logManager);
+void shellSort(ListaCircularDoble<Libro>& libros); // Función de Shell Sort para ordenar libros por título
 
 int main() {
     menu();
@@ -30,7 +31,7 @@ void menu() {
     ListaCircularDoble<Libro> libros;
     LogManager logManager("biblioteca_log.txt"); // Instancia del LogManager
 
-    const int numOpciones = 9;
+    const int numOpciones = 10; // Agregamos una opción más para ordenar libros
     string opciones[numOpciones] = {
         "Ingresar libro",
         "Mostrar autores y libros",
@@ -40,6 +41,7 @@ void menu() {
         "Crear backup",
         "Restaurar backup",
         "Mostrar registro de eventos",
+        "Ordenar libros por título", // Nueva opción
         "Salir"
     };
     int opcionSeleccionada = 0;
@@ -51,7 +53,7 @@ void menu() {
         if (tecla == 13) { // Enter
             system("cls");
             procesarSeleccion(opcionSeleccionada, autores, libros, logManager);
-            if (opcionSeleccionada == 8) { // Salir
+            if (opcionSeleccionada == 9) { // Salir
                 break;
             }
             system("pause");
@@ -155,7 +157,7 @@ void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autore
         case 2: { // Buscar por autor o libro
             string consulta = Validaciones::ingresar_string_con_mayuscula("Ingrese el autor o libro que desea buscar: ");
 
-            cout << "\nResultados de búsqueda para: " << consulta << "\n\n";
+            cout << "\nResultados de busqueda para: " << consulta << "\n\n";
 
             cout << "Autores encontrados:\n";
             bool encontrado = false;
@@ -204,7 +206,13 @@ void procesarSeleccion(int opcionSeleccionada, ListaCircularDoble<Autor>& autore
         case 7: // Mostrar registro de eventos
             logManager.mostrarLog();
             break;
-        case 8: // Salir
+        case 8: { // Ordenar libros por título
+            shellSort(libros);
+            cout << "Libros ordenados por titulo.\n";
+            logManager.escribirLog("Libros ordenados por título.");
+            break;
+        }
+        case 9: // Salir
             cout << "Saliendo del programa...\n";
             logManager.escribirLog("El programa ha finalizado.");
             break;
@@ -246,7 +254,7 @@ void restaurarBackup(ListaCircularDoble<Autor>& autores, ListaCircularDoble<Libr
             cout << "Backup restaurado exitosamente.\n";
             logManager.escribirLog("Backup restaurado: " + backups[opcion-1].timestamp);
         } else {
-            cout << "Error al restaurar el backup.\n";
+            cout << "Error al restaurar el backup.\n";  
             logManager.escribirLog("Error al restaurar el backup: " + backups[opcion-1].timestamp);
         }
     } else if (opcion != 0) {
@@ -255,7 +263,26 @@ void restaurarBackup(ListaCircularDoble<Autor>& autores, ListaCircularDoble<Libr
     }
 }
 
-
 void cambiarColor(int color) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
+
+
+void shellSort(ListaCircularDoble<Libro>& libros) {
+    int n = libros.obtenerTamano(); // Obtener el tamaño de la lista
+    if (n <= 1) return; // Si la lista tiene uno o menos elementos, no hay nada que ordenar
+
+    // Definimos un comparador para ordenar los libros por título
+    auto comparador = [](const Libro& a, const Libro& b) {
+        return a.getTitulo() < b.getTitulo(); // Comparar por el título alfabéticamente
+    };
+
+    libros.ordenarShell(comparador); // Llamamos al método ordenarShell de ListaCircularDoble
+
+    // Imprimir la lista ordenada
+    cout << "Libros ordenados por titulo:\n";
+    libros.imprimir([](const Libro& libro) {
+        cout << libro.obtenerInformacion() << endl;  // Aquí se muestra la información del libro, puedes personalizar la salida
+    });
+}
+

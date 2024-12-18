@@ -26,7 +26,7 @@ public:
     std::string obtenerCodigo() const;  // Obtener el código del libro
     std::string obtenerInformacion() const;
     bool operator==(const Libro& other) const;
-
+   
     // Getters
     std::string getTitulo() const;
     Autor getAutor() const;
