@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "cwd": "c:/ESPE/1992-ESTRUCTURA DE DATOS/1992_Estructura-de-datos_11-a-1/Proyecto General/ProyectoPrimerParcial",
+      "program": "c:/ESPE/1992-ESTRUCTURA DE DATOS/1992_Estructura-de-datos_11-a-1/Proyecto General/ProyectoPrimerParcial/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}
