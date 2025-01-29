@@ -1,0 +1,46 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "C/C++: g++.exe build active file",
+			"command": "C:/MinGW/bin/g++.exe",
+			"args": [
+				"-Wall",
+				"-Wextra",
+				"-g3",
+				"${workspaceFolder}/main.cpp",
+				"${workspaceFolder}/pdf_generator.cpp",
+				"${workspaceFolder}/funciones.cpp",
+				"${workspaceFolder}/ArbolRojoNegro.cpp",
+				"${workspaceFolder}/NodoRojoNegro.cpp",
+				"${workspaceFolder}/Libro.cpp",
+				"${workspaceFolder}/Fecha.cpp",
+				"${workspaceFolder}/Persona.cpp",
+				"${workspaceFolder}/BackupManager.cpp",
+				"${workspaceFolder}/Utils.cpp",
+				"${workspaceFolder}/Menu.cpp",
+				"${workspaceFolder}/Validaciones.cpp",
+				"${workspaceFolder}/ListaCircularMenu.cpp",
+				"-o",
+				"${workspaceFolder}/main.exe",
+				"-I",
+				"${workspaceFolder}/LibPDF",
+				"-L",
+				"${workspaceFolder}/LibPDF",
+				"-lhpdf"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "compiler: C:/MinGW/bin/g++.exe"
+		}
+	]
+}
