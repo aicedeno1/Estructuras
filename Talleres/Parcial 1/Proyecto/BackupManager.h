@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <ctime>
-#include "ListaCircularDoble.h"
+#include "Arboles.h"  // Se cambia a la declaración del encabezado correspondiente
 #include "Libro.h"
 #include "Autor.h"
 
@@ -26,14 +26,14 @@ private:
 
 public:
     BackupManager(const std::string& directory = "backups/");
-    
-    bool crearBackup(const ListaCircularDoble<Libro>& libros, 
-                    const ListaCircularDoble<Autor>& autores);
-    
+
+    bool crearBackup(const ArbolBinario<Libro>& libros, 
+                     const ArbolBinario<Autor>& autores);
+
     bool restaurarBackup(const std::string& timestamp,
-                        ListaCircularDoble<Libro>& libros,
-                        ListaCircularDoble<Autor>& autores);
-    
+                         ArbolBinario<Libro>& libros,
+                         ArbolBinario<Autor>& autores);
+
     std::vector<BackupInfo> obtenerListaBackups() const;
     bool eliminarBackup(const std::string& timestamp);
 };

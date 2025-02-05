@@ -4,7 +4,7 @@
 		{
 			"type": "cppbuild",
 			"label": "C/C++: g++.exe build active file",
-			"command": "C:/MinGW/bin/g++.exe",
+			"command": "C:/TDM-GCC-32/bin/g++.exe",
 			"args": [
 				"-Wall",
 				"-Wextra",
@@ -30,7 +30,7 @@
 				"kind": "build",
 				"isDefault": true
 			},
-			"detail": "compiler: C:/MinGW/bin/g++.exe"
+			"detail": "compiler: C:/TDM-GCC-32/bin/g++.exe"
 		}
 	]
 }

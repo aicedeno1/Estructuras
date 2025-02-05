@@ -11,3 +11,7 @@
 [2024-12-18 10:18:51] Libros ordenados por título.
 [2024-12-18 10:20:47] Libro agregado: El principito
 [2024-12-18 10:20:50] Libros ordenados por título.
+[2025-01-04 23:34:19] El programa ha finalizado.
+[2025-01-05 22:32:01] Autor agregado: sfddf Sdfsdf
+[2025-01-05 22:32:13] Libro agregado: Dsfsd
+[2025-01-05 22:32:30] Libro eliminado: 1
