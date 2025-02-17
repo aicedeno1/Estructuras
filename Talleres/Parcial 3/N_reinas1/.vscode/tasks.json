@@ -1,0 +1,32 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "build-32",
+        "type": "shell",
+        "command": "C:\\TDM-GCC-32\\bin\\g++.exe",
+        "args": [
+          "-g",
+          "${file}",
+          "-o",
+          "${fileDirname}\\${fileBasenameNoExtension}.exe",
+          "-std=c++17",
+          "-L",
+          "C:\\TDM-GCC-32\\lib",
+          "-L",
+          "C:\\TDM-GCC-32\\mingw32\\lib",
+          "-lbgi",
+          "-lgdi32",
+          "-lcomdlg32",
+          "-luuid",
+          "-loleaut32",
+          "-lole32"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": ["$gcc"]
+      }
+    ]
+  }
