@@ -144,7 +144,7 @@ void compararDosComplejidades(const ComplejidadData &comp1, const ComplejidadDat
 // Función para mostrar análisis detallado
 void mostrarAnalisisDetallado(const ComplejidadData &comp)
 {
-    cout << "\n=== Análisis Detallado: " << comp.nombre << " ===\n\n";
+    cout << "\n=== Analisis Detallado: " << comp.nombre << " ===\n\n";
 
     cout << "Descripción:\n"
          << comp.descripcion << "\n\n";
@@ -157,11 +157,11 @@ void mostrarAnalisisDetallado(const ComplejidadData &comp)
     for (const auto &ejemplo : comp.ejemplos)
     {
         cout << "- " << ejemplo.nombre << "\n";
-        cout << "  Descripción: " << ejemplo.descripcion << "\n";
+        cout << "  Descripcion: " << ejemplo.descripcion << "\n";
         cout << "  Caso de uso: " << ejemplo.casoUso << "\n\n";
     }
 
-    cout << "Puntos críticos:\n";
+    cout << "Puntos criticos:\n";
     for (const auto &punto : comp.puntosCriticos)
     {
         cout << "- " << punto << "\n";
@@ -177,12 +177,30 @@ void graficarComplejidad(const string &nombre, double (*funcion)(double), int co
     int maxY = getmaxy();
     cleardevice();
 
+    // Fondo negro para mejor contraste
+    setbkcolor(BLACK);
+    cleardevice();
+
     // Ejes
     setcolor(WHITE);
     line(50, maxY - 50, maxX - 50, maxY - 50); // Eje X
     line(50, maxY - 50, 50, 50);               // Eje Y
 
+    // Cuadrícula para mejor referencia
+    setcolor(DARKGRAY);
+    setlinestyle(DOTTED_LINE, 0, NORM_WIDTH);
+    for (int i = 1; i <= 10; i++)
+    {
+        int xPos = 50 + (i * (maxX - 100) / 10);
+        line(xPos, maxY - 50, xPos, 50); // Líneas verticales
+
+        int yPos = maxY - 50 - (i * (maxY - 100) / 10);
+        line(50, yPos, maxX - 50, yPos); // Líneas horizontales
+    }
+
     // Flechas en los ejes
+    setcolor(WHITE);
+    setlinestyle(SOLID_LINE, 0, NORM_WIDTH);
     line(50, 50, 45, 60);                             // Flecha Y
     line(50, 50, 55, 60);                             // Flecha Y
     line(maxX - 50, maxY - 50, maxX - 60, maxY - 55); // Flecha X
@@ -190,7 +208,7 @@ void graficarComplejidad(const string &nombre, double (*funcion)(double), int co
 
     // Título
     settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
-    setcolor(color);
+    setcolor(WHITE);
     outtextxy(maxX / 2 - 100, 20, const_cast<char *>(nombre.c_str()));
 
     // Etiquetas
@@ -199,13 +217,24 @@ void graficarComplejidad(const string &nombre, double (*funcion)(double), int co
     outtextxy(20, maxY / 2, "Tiempo");
     outtextxy(maxX / 2, maxY - 30, "Tamano de entrada (n)");
 
-    // Graficar función
-    setcolor(color);
+    // Marcas en los ejes X e Y con valores
+    setcolor(LIGHTGRAY);
+    for (int i = 0; i <= 10; i += 2)
+    {
+        int xPos = 50 + (i * (maxX - 100) / 10);
+        line(xPos, maxY - 50, xPos, maxY - 45); // Marca en X
+        char xLabel[10];
+        sprintf(xLabel, "%d", i);
+        outtextxy(xPos - 5, maxY - 40, xLabel);
+    }
+
+    // Graficar función - USAR ROJO PARA TODAS LAS COMPLEJIDADES
+    setcolor(RED);
     setlinestyle(SOLID_LINE, 0, THICK_WIDTH);
 
     vector<pair<double, double>> puntos;
-    for (double n = 0; n <= 10; n += 0.1)
-    {
+    for (double n = 0; n <= 10; n += 0.05)
+    { // Reducido el paso para líneas más suaves
         puntos.push_back({n, funcion(n)});
     }
 
@@ -216,6 +245,40 @@ void graficarComplejidad(const string &nombre, double (*funcion)(double), int co
         maxY_value = max(maxY_value, punto.second);
     }
 
+    // Área bajo la curva (opcional)
+    if (maxY_value > 0)
+    {
+        // Versión semitransparente del color principal (simulado con un patrón)
+        setfillstyle(LTSLASH_FILL, color);
+
+        int poly[202]; // Para 100 puntos (máx), cada punto tiene x,y
+        int idx = 0;
+
+        for (size_t i = 0; i < puntos.size(); i++)
+        {
+            int x = 50 + (puntos[i].first * (maxX - 100) / 10);
+            int y = maxY - 50 - (puntos[i].second * 300 / maxY_value);
+
+            if (idx < 200)
+            {
+                poly[idx++] = x;
+                poly[idx++] = y;
+            }
+        }
+
+        // Añadir los puntos base para cerrar el polígono
+        poly[idx++] = 50 + (puntos.back().first * (maxX - 100) / 10);
+        poly[idx++] = maxY - 50;
+        poly[idx++] = 50;
+        poly[idx++] = maxY - 50;
+
+        fillpoly(idx / 2, poly);
+    }
+
+    // Dibujar la línea principal con más grosor
+    setlinestyle(SOLID_LINE, 0, USERBIT_LINE); // Línea muy gruesa
+    setcolor(RED);                             // Color rojo para todas las complejidades
+
     for (size_t i = 1; i < puntos.size(); i++)
     {
         int x1 = 50 + (puntos[i - 1].first * (maxX - 100) / 10);
@@ -223,9 +286,28 @@ void graficarComplejidad(const string &nombre, double (*funcion)(double), int co
         int y1 = maxY - 50 - (puntos[i - 1].second * 300 / maxY_value);
         int y2 = maxY - 50 - (puntos[i].second * 300 / maxY_value);
 
-        line(x1, y1, x2, y2);
+        // Dibujar línea gruesa usando múltiples líneas cercanas
+        for (int offset = -1; offset <= 1; offset++)
+        {
+            line(x1, y1 + offset, x2, y2 + offset);
+            line(x1 + offset, y1, x2 + offset, y2);
+        }
     }
 
+    // Leyenda
+    setcolor(WHITE);
+    rectangle(maxX - 200, 50, maxX - 50, 100);
+    setfillstyle(SOLID_FILL, BLACK);
+    floodfill(maxX - 100, 75, WHITE);
+
+    setcolor(RED);
+    setlinestyle(SOLID_LINE, 0, THICK_WIDTH);
+    line(maxX - 180, 75, maxX - 150, 75);
+
+    setcolor(WHITE);
+    outtextxy(maxX - 140, 70, const_cast<char *>(nombre.c_str()));
+
+    // Esperar por una tecla
     getch();
     closegraph();
 }
