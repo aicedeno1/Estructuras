@@ -1,681 +1,790 @@
 #include <iostream>
 #include <string>
-#include <limits>
-#include <cstdlib>
-#include <iomanip>
 #include <memory>
+#include <fstream>
 #include "Banco.h"
-#include "Cliente.h"
-#include "Cuenta.h"
-#include "Transaccion.h"
 
-using namespace std;
+// Función para mostrar el menú de administrador/desarrollador
+void mostrarMenuDesarrollador(Banco &banco);
 
-// Definición de constantes de colores ANSI para mejorar la interfaz
-const string COLOR_RESET = "\033[0m";
-const string COLOR_TITULO = "\033[1;36m";  // Cian brillante
-const string COLOR_MENU = "\033[1;33m";    // Amarillo brillante
-const string COLOR_EXITO = "\033[1;32m";   // Verde brillante
-const string COLOR_ERROR = "\033[1;31m";   // Rojo brillante
-const string COLOR_INFO = "\033[1;34m";    // Azul brillante
-const string COLOR_PROMPT = "\033[1;35m";  // Magenta brillante
+// Función para mostrar el menú de cliente
+void mostrarMenuCliente(Banco &banco, std::shared_ptr<Cliente> cliente);
 
-// Función para limpiar la pantalla
-void limpiarPantalla() {
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-}
+// Función para validar entrada numérica
+bool validarNumero(const std::string &str);
 
-// Función para pausar y esperar entrada del usuario
-void pausar() {
-    cout << COLOR_PROMPT << "\nPresione Enter para continuar..." << COLOR_RESET;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    cin.get();
-}
+// Función para validar cédula (formato básico)
+bool validarCedula(const std::string &cedula);
 
-// Función para limpiar el buffer de entrada
-void limpiarBuffer() {
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-}
+// Función para validar correo electrónico (formato básico)
+bool validarCorreo(const std::string &correo);
 
-// Función para mostrar línea decorativa
-void mostrarLinea(char caracter = '=', int longitud = 80) {
-    cout << string(longitud, caracter) << endl;
-}
+// Función para validar número de teléfono (formato básico)
+bool validarTelefono(const std::string &telefono);
 
-// Función para mostrar el título del banco
-void mostrarTituloBanco(const string& nombreBanco) {
-    limpiarPantalla();
-    mostrarLinea('*');
-    cout << COLOR_TITULO << setw(40 + nombreBanco.length()/2) << nombreBanco << COLOR_RESET << endl;
-    cout << COLOR_TITULO << setw(46) << "SISTEMA DE BANCA EN LÍNEA" << COLOR_RESET << endl;
-    mostrarLinea('*');
-    cout << endl;
-}
+// Función para crear respaldo de datos
+bool crearRespaldo(const Banco &banco, const std::string &tipoArchivo);
 
-// Función para mostrar el menú principal
-int mostrarMenuPrincipal() {
-    int opcion;
-    cout << COLOR_MENU << "===== MENÚ PRINCIPAL =====" << COLOR_RESET << endl;
-    cout << "1. Iniciar sesión" << endl;
-    cout << "2. Registrarse como nuevo cliente" << endl;
-    cout << "3. Información del banco" << endl;
-    cout << "0. Salir" << endl;
-    cout << COLOR_PROMPT << "Seleccione una opción: " << COLOR_RESET;
-    cin >> opcion;
-    
-    if (cin.fail()) {
-        limpiarBuffer();
-        return -1;
+int main()
+{
+    // Inicializar el banco
+    Banco banco("Mi Banco");
+
+    // Intentar cargar datos previos
+    if (!banco.cargarDatos("datos_banco.dat"))
+    {
+        std::cout << "No se encontraron datos previos. Se iniciará con un banco vacío." << std::endl;
     }
-    
-    return opcion;
-}
 
-// Función para mostrar el menú del cliente
-int mostrarMenuCliente(const string& nombreCliente) {
-    int opcion;
-    cout << COLOR_MENU << "===== MENÚ DE CLIENTE: " << nombreCliente << " =====" << COLOR_RESET << endl;
-    cout << "1. Ver mis cuentas" << endl;
-    cout << "2. Ver detalles de una cuenta" << endl;
-    cout << "3. Realizar depósito" << endl;
-    cout << "4. Realizar retiro" << endl;
-    cout << "5. Realizar transferencia" << endl;
-    cout << "6. Pagar servicio" << endl;
-    cout << "7. Solicitar nueva cuenta" << endl;
-    cout << "8. Actualizar información personal" << endl;
-    cout << "0. Cerrar sesión" << endl;
-    cout << COLOR_PROMPT << "Seleccione una opción: " << COLOR_RESET;
-    cin >> opcion;
-    
-    if (cin.fail()) {
-        limpiarBuffer();
-        return -1;
-    }
-    
-    return opcion;
-}
+    bool salir = false;
 
-// Función para registrar un nuevo cliente
-void registrarNuevoCliente(Banco& banco) {
-    string cedula, nombres, apellidos, correo, telefono, direccion, contrasena;
-    
-    limpiarPantalla();
-    cout << COLOR_TITULO << "===== REGISTRO DE NUEVO CLIENTE =====" << COLOR_RESET << endl;
-    
-    cout << "Ingrese su número de cédula: ";
-    cin >> cedula;
-    limpiarBuffer();
-    
-    cout << "Ingrese sus nombres: ";
-    getline(cin, nombres);
-    
-    cout << "Ingrese sus apellidos: ";
-    getline(cin, apellidos);
-    
-    cout << "Ingrese su correo electrónico: ";
-    getline(cin, correo);
-    
-    cout << "Ingrese su número de teléfono: ";
-    getline(cin, telefono);
-    
-    cout << "Ingrese su dirección: ";
-    getline(cin, direccion);
-    
-    cout << "Ingrese una contraseña: ";
-    getline(cin, contrasena);
-    
-    if (banco.registrarCliente(cedula, nombres, apellidos, correo, telefono, direccion, contrasena)) {
-        // Crear automáticamente una cuenta de ahorros con saldo inicial
-        cout << COLOR_INFO << "\nAhora crearemos su primera cuenta de ahorros." << COLOR_RESET << endl;
-        double saldoInicial;
-        cout << "Ingrese el saldo inicial para su cuenta de ahorros: $";
-        cin >> saldoInicial;
-        
-        if (cin.fail()) {
-            limpiarBuffer();
-            cout << COLOR_ERROR << "Monto inválido. Se creará la cuenta con saldo 0." << COLOR_RESET << endl;
-            saldoInicial = 0.0;
+    while (!salir)
+    {
+        std::cout << "\n===== SISTEMA BANCARIO =====" << std::endl;
+        std::cout << "1. Acceso como cliente" << std::endl;
+        std::cout << "2. Acceso como desarrollador/administrador" << std::endl;
+        std::cout << "3. Salir" << std::endl;
+        std::cout << "Seleccione una opción: ";
+
+        std::string opcionStr;
+        std::getline(std::cin, opcionStr);
+
+        if (!validarNumero(opcionStr))
+        {
+            std::cout << "Error: Ingrese un número válido." << std::endl;
+            continue;
         }
-        
-        if (banco.crearCuenta(cedula, AHORROS, saldoInicial)) {
-            cout << COLOR_EXITO << "\n¡Registro completado con éxito! Puede iniciar sesión con su cédula y contraseña." << COLOR_RESET << endl;
-        } else {
-            cout << COLOR_ERROR << "\nError al crear la cuenta, pero su registro como cliente fue exitoso." << COLOR_RESET << endl;
-        }
-    } else {
-        cout << COLOR_ERROR << "\nError en el registro. Intente nuevamente más tarde." << COLOR_RESET << endl;
-    }
-    
-    pausar();
-}
 
-// Función para iniciar sesión
-shared_ptr<Cliente> iniciarSesion(Banco& banco) {
-    string cedula, contrasena;
-    
-    limpiarPantalla();
-    cout << COLOR_TITULO << "===== INICIO DE SESIÓN =====" << COLOR_RESET << endl;
-    
-    cout << "Ingrese su número de cédula: ";
-    cin >> cedula;
-    limpiarBuffer();
-    
-    cout << "Ingrese su contraseña: ";
-    getline(cin, contrasena);
-    
-    auto cliente = banco.autenticarCliente(cedula, contrasena);
-    
-    if (cliente) {
-        cout << COLOR_EXITO << "\n¡Bienvenido/a, " << cliente->getNombreCompleto() << "!" << COLOR_RESET << endl;
-        pausar();
-        return cliente;
-    } else {
-        cout << COLOR_ERROR << "\nCredenciales incorrectas o cliente inactivo." << COLOR_RESET << endl;
-        pausar();
-        return nullptr;
-    }
-}
+        int opcion = std::stoi(opcionStr);
 
-// Función para ver las cuentas del cliente
-void verCuentasCliente(shared_ptr<Cliente> cliente) {
-    limpiarPantalla();
-    cout << COLOR_TITULO << "===== MIS CUENTAS =====" << COLOR_RESET << endl;
-    
-    cliente->mostrarCuentas();
-    
-    pausar();
-}
-
-// Función para ver detalles de una cuenta específica
-void verDetallesCuenta(shared_ptr<Cliente> cliente) {
-    string numeroCuenta;
-    
-    limpiarPantalla();
-    cout << COLOR_TITULO << "===== DETALLES DE CUENTA =====" << COLOR_RESET << endl;
-    
-    cliente->mostrarCuentas();
-    
-    cout << "\nIngrese el número de cuenta para ver detalles: ";
-    cin >> numeroCuenta;
-    
-    auto cuenta = cliente->buscarCuentaPorNumero(numeroCuenta);
-    
-    if (cuenta) {
-        limpiarPantalla();
-        cout << COLOR_TITULO << "===== DETALLES DE CUENTA " << numeroCuenta << " =====" << COLOR_RESET << endl;
-        cuenta->mostrarDetalles();
-        
-        cout << "\n¿Desea ver el historial de transacciones? (s/n): ";
-        char respuesta;
-        cin >> respuesta;
-        
-        if (tolower(respuesta) == 's') {
-            cuenta->mostrarHistorialTransacciones();
-        }
-    } else {
-        cout << COLOR_ERROR << "Cuenta no encontrada o no le pertenece." << COLOR_RESET << endl;
-    }
-    
-    pausar();
-}
-
-// Función para realizar un depósito
-void realizarDeposito(shared_ptr<Cliente> cliente) {
-    string numeroCuenta;
-    double monto;
-    string descripcion;
-    
-    limpiarPantalla();
-    cout << COLOR_TITULO << "===== REALIZAR DEPÓSITO =====" << COLOR_RESET << endl;
-    
-    cliente->mostrarCuentas();
-    
-    cout << "\nIngrese el número de cuenta para el depósito: ";
-    cin >> numeroCuenta;
-    
-    auto cuenta = cliente->buscarCuentaPorNumero(numeroCuenta);
-    
-    if (cuenta) {
-        cout << "Ingrese el monto a depositar: $";
-        cin >> monto;
-        
-        if (cin.fail()) {
-            limpiarBuffer();
-            cout << COLOR_ERROR << "Monto inválido." << COLOR_RESET << endl;
-            pausar();
-            return;
-        }
-        
-        limpiarBuffer();
-        cout << "Ingrese una descripción para el depósito: ";
-        getline(cin, descripcion);
-        
-        if (cuenta->depositar(monto, descripcion)) {
-            cout << COLOR_EXITO << "\nDepósito realizado con éxito. Nuevo saldo: $" 
-                 << fixed << setprecision(2) << cuenta->getSaldo() << COLOR_RESET << endl;
-        } else {
-            cout << COLOR_ERROR << "\nError al realizar el depósito." << COLOR_RESET << endl;
-        }
-    } else {
-        cout << COLOR_ERROR << "Cuenta no encontrada o no le pertenece." << COLOR_RESET << endl;
-    }
-    
-    pausar();
-}
-
-// Función para realizar un retiro
-void realizarRetiro(shared_ptr<Cliente> cliente) {
-    string numeroCuenta;
-    double monto;
-    string descripcion;
-    
-    limpiarPantalla();
-    cout << COLOR_TITULO << "===== REALIZAR RETIRO =====" << COLOR_RESET << endl;
-    
-    cliente->mostrarCuentas();
-    
-    cout << "\nIngrese el número de cuenta para el retiro: ";
-    cin >> numeroCuenta;
-    
-    auto cuenta = cliente->buscarCuentaPorNumero(numeroCuenta);
-    
-    if (cuenta) {
-        cout << "Saldo disponible: $" << fixed << setprecision(2) << cuenta->getSaldo() << endl;
-        cout << "Ingrese el monto a retirar: $";
-        cin >> monto;
-        
-        if (cin.fail()) {
-            limpiarBuffer();
-            cout << COLOR_ERROR << "Monto inválido." << COLOR_RESET << endl;
-            pausar();
-            return;
-        }
-        
-        limpiarBuffer();
-        cout << "Ingrese una descripción para el retiro: ";
-        getline(cin, descripcion);
-        
-        if (cuenta->retirar(monto, descripcion)) {
-            cout << COLOR_EXITO << "\nRetiro realizado con éxito. Nuevo saldo: $" 
-                 << fixed << setprecision(2) << cuenta->getSaldo() << COLOR_RESET << endl;
-        } else {
-            cout << COLOR_ERROR << "\nError al realizar el retiro." << COLOR_RESET << endl;
-        }
-    } else {
-        cout << COLOR_ERROR << "Cuenta no encontrada o no le pertenece." << COLOR_RESET << endl;
-    }
-    
-    pausar();
-}
-
-// Función para realizar una transferencia
-void realizarTransferencia(Banco& banco, shared_ptr<Cliente> cliente) {
-    string cuentaOrigen, cuentaDestino;
-    double monto;
-    string descripcion;
-    
-    limpiarPantalla();
-    cout << COLOR_TITULO << "===== REALIZAR TRANSFERENCIA =====" << COLOR_RESET << endl;
-    
-    cliente->mostrarCuentas();
-    
-    cout << "\nIngrese el número de su cuenta origen: ";
-    cin >> cuentaOrigen;
-    
-    auto cuenta = cliente->buscarCuentaPorNumero(cuentaOrigen);
-    
-    if (!cuenta) {
-        cout << COLOR_ERROR << "Cuenta origen no encontrada o no le pertenece." << COLOR_RESET << endl;
-        pausar();
-        return;
-    }
-    
-    cout << "Saldo disponible: $" << fixed << setprecision(2) << cuenta->getSaldo() << endl;
-    cout << "Ingrese el número de cuenta destino: ";
-    cin >> cuentaDestino;
-    
-    if (cuentaOrigen == cuentaDestino) {
-        cout << COLOR_ERROR << "No puede transferir a la misma cuenta." << COLOR_RESET << endl;
-        pausar();
-        return;
-    }
-    
-    cout << "Ingrese el monto a transferir: $";
-    cin >> monto;
-    
-    if (cin.fail()) {
-        limpiarBuffer();
-        cout << COLOR_ERROR << "Monto inválido." << COLOR_RESET << endl;
-        pausar();
-        return;
-    }
-    
-    limpiarBuffer();
-    cout << "Ingrese una descripción para la transferencia: ";
-    getline(cin, descripcion);
-    
-    if (banco.realizarTransferencia(cuentaOrigen, cuentaDestino, monto, descripcion)) {
-        cout << COLOR_EXITO << "\nTransferencia realizada con éxito. Nuevo saldo: $" 
-             << fixed << setprecision(2) << cuenta->getSaldo() << COLOR_RESET << endl;
-    } else {
-        cout << COLOR_ERROR << "\nError al realizar la transferencia." << COLOR_RESET << endl;
-    }
-    
-    pausar();
-}
-
-// Función para pagar servicios
-void pagarServicio(Banco& banco, shared_ptr<Cliente> cliente) {
-    string numeroCuenta, tipoServicio, referencia;
-    double monto;
-    
-    limpiarPantalla();
-    cout << COLOR_TITULO << "===== PAGO DE SERVICIOS =====" << COLOR_RESET << endl;
-    
-    cliente->mostrarCuentas();
-    
-    cout << "\nIngrese el número de cuenta para el pago: ";
-    cin >> numeroCuenta;
-    
-    auto cuenta = cliente->buscarCuentaPorNumero(numeroCuenta);
-    
-    if (!cuenta) {
-        cout << COLOR_ERROR << "Cuenta no encontrada o no le pertenece." << COLOR_RESET << endl;
-        pausar();
-        return;
-    }
-    
-    cout << "Saldo disponible: $" << fixed << setprecision(2) << cuenta->getSaldo() << endl;
-    
-    limpiarBuffer();
-    cout << "Tipos de servicios disponibles:" << endl;
-    cout << "1. Agua" << endl;
-    cout << "2. Luz" << endl;
-    cout << "3. Teléfono" << endl;
-    cout << "4. Internet" << endl;
-    cout << "5. Otro" << endl;
-    
-    int opcionServicio;
-    cout << "Seleccione el tipo de servicio: ";
-    cin >> opcionServicio;
-    
-    switch (opcionServicio) {
-        case 1: tipoServicio = "Agua"; break;
-        case 2: tipoServicio = "Luz"; break;
-        case 3: tipoServicio = "Teléfono"; break;
-        case 4: tipoServicio = "Internet"; break;
-        case 5: 
-            limpiarBuffer();
-            cout << "Ingrese el tipo de servicio: ";
-            getline(cin, tipoServicio);
-            break;
-        default:
-            cout << COLOR_ERROR << "Opción inválida." << COLOR_RESET << endl;
-            pausar();
-            return;
-    }
-    
-    if (opcionServicio >= 1 && opcionServicio <= 4) {
-        limpiarBuffer();
-    }
-    
-    cout << "Ingrese el número de referencia o factura: ";
-    getline(cin, referencia);
-    
-    cout << "Ingrese el monto a pagar: $";
-    cin >> monto;
-    
-    if (cin.fail()) {
-        limpiarBuffer();
-        cout << COLOR_ERROR << "Monto inválido." << COLOR_RESET << endl;
-        pausar();
-        return;
-    }
-    
-    if (banco.pagarServicio(numeroCuenta, tipoServicio, monto, referencia)) {
-        cout << COLOR_EXITO << "\nPago de servicio realizado con éxito. Nuevo saldo: $" 
-             << fixed << setprecision(2) << cuenta->getSaldo() << COLOR_RESET << endl;
-    } else {
-        cout << COLOR_ERROR << "\nError al realizar el pago de servicio." << COLOR_RESET << endl;
-    }
-    
-    pausar();
-}
-
-// Función para solicitar una nueva cuenta
-void solicitarNuevaCuenta(Banco& banco, shared_ptr<Cliente> cliente) {
-    int tipoCuenta;
-    double saldoInicial;
-    
-    limpiarPantalla();
-    cout << COLOR_TITULO << "===== SOLICITUD DE NUEVA CUENTA =====" << COLOR_RESET << endl;
-    
-    cout << "Tipos de cuenta disponibles:" << endl;
-    cout << "1. Cuenta de Ahorros" << endl;
-    cout << "2. Cuenta Corriente" << endl;
-    cout << "Seleccione el tipo de cuenta: ";
-    cin >> tipoCuenta;
-    
-    if (cin.fail() || (tipoCuenta != 1 && tipoCuenta != 2)) {
-        limpiarBuffer();
-        cout << COLOR_ERROR << "Opción inválida." << COLOR_RESET << endl;
-        pausar();
-        return;
-    }
-    
-    TipoCuenta tipo = (tipoCuenta == 1) ? AHORROS : CORRIENTE;
-    
-    cout << "Ingrese el saldo inicial para la nueva cuenta: $";
-    cin >> saldoInicial;
-    
-    if (cin.fail()) {
-        limpiarBuffer();
-        cout << COLOR_ERROR << "Monto inválido." << COLOR_RESET << endl;
-        pausar();
-        return;
-    }
-    
-    if (banco.crearCuenta(cliente->getCedula(), tipo, saldoInicial)) {
-        cout << COLOR_EXITO << "\nCuenta creada exitosamente." << COLOR_RESET << endl;
-    } else {
-        cout << COLOR_ERROR << "\nError al crear la cuenta." << COLOR_RESET << endl;
-    }
-    
-    pausar();
-}
-
-// Función para actualizar información personal
-void actualizarInformacionPersonal(shared_ptr<Cliente> cliente) {
-    int opcion;
-    
-    limpiarPantalla();
-    cout << COLOR_TITULO << "===== ACTUALIZAR INFORMACIÓN PERSONAL =====" << COLOR_RESET << endl;
-    
-    cliente->mostrarInformacion();
-    
-    cout << "\n¿Qué información desea actualizar?" << endl;
-    cout << "1. Correo electrónico" << endl;
-    cout << "2. Número de teléfono" << endl;
-    cout << "3. Dirección" << endl;
-    cout << "4. Contraseña" << endl;
-    cout << "0. Volver al menú anterior" << endl;
-    cout << COLOR_PROMPT << "Seleccione una opción: " << COLOR_RESET;
-    cin >> opcion;
-    
-    if (cin.fail()) {
-        limpiarBuffer();
-        cout << COLOR_ERROR << "Opción inválida." << COLOR_RESET << endl;
-        pausar();
-        return;
-    }
-    
-    limpiarBuffer();
-    
-    string nuevoValor;
-    bool actualizado = false;
-    
-    switch (opcion) {
+        switch (opcion)
+        {
         case 1:
-            cout << "Ingrese el nuevo correo electrónico: ";
-            getline(cin, nuevoValor);
-            cliente->setCorreo(nuevoValor);
-            actualizado = true;
+        {
+            // Acceso como cliente
+            std::string cedula, contrasena;
+
+            std::cout << "\nAcceso de Cliente" << std::endl;
+            std::cout << "Ingrese su cédula: ";
+            std::getline(std::cin, cedula);
+
+            if (!validarCedula(cedula))
+            {
+                std::cout << "Error: Formato de cédula inválido." << std::endl;
+                continue;
+            }
+
+            std::cout << "Ingrese su contraseña: ";
+            std::getline(std::cin, contrasena);
+
+            auto cliente = banco.autenticarCliente(cedula, contrasena);
+
+            if (cliente)
+            {
+                mostrarMenuCliente(banco, cliente);
+            }
+            else
+            {
+                std::cout << "Error: Credenciales inválidas o cliente inactivo." << std::endl;
+            }
             break;
-            
+        }
         case 2:
-            cout << "Ingrese el nuevo número de teléfono: ";
-            getline(cin, nuevoValor);
-            cliente->setTelefono(nuevoValor);
-            actualizado = true;
+        {
+            // Acceso como desarrollador/administrador
+            std::string contrasenaAdmin;
+            std::cout << "\nAcceso de Desarrollador/Administrador" << std::endl;
+            std::cout << "Ingrese la contraseña de administrador: ";
+            std::getline(std::cin, contrasenaAdmin);
+
+            if (contrasenaAdmin == "admin123")
+            { // En un sistema real, usar mecanismos más seguros
+                mostrarMenuDesarrollador(banco);
+            }
+            else
+            {
+                std::cout << "Error: Contraseña de administrador incorrecta." << std::endl;
+            }
             break;
-            
+        }
         case 3:
-            cout << "Ingrese la nueva dirección: ";
-            getline(cin, nuevoValor);
-            cliente->setDireccion(nuevoValor);
-            actualizado = true;
+            // Guardar datos antes de salir
+            banco.guardarDatos("datos_banco.dat");
+            std::cout << "¡Gracias por usar el sistema bancario!" << std::endl;
+            salir = true;
             break;
-            
-        case 4:
-            cout << "Ingrese la nueva contraseña: ";
-            getline(cin, nuevoValor);
-            cliente->setContrasena(nuevoValor);
-            actualizado = true;
-            break;
-            
-        case 0:
-            return;
-            
         default:
-            cout << COLOR_ERROR << "Opción inválida." << COLOR_RESET << endl;
+            std::cout << "Opción inválida. Intente nuevamente." << std::endl;
             break;
-    }
-    
-    if (actualizado) {
-        cout << COLOR_EXITO << "\nInformación actualizada exitosamente." << COLOR_RESET << endl;
-    }
-    
-    pausar();
-}
-
-// Función para mostrar información del banco
-void mostrarInformacionBanco(const string& nombreBanco) {
-    limpiarPantalla();
-    cout << COLOR_TITULO << "===== INFORMACIÓN DEL BANCO =====" << COLOR_RESET << endl;
-    
-    cout << "Nombre: " << nombreBanco << endl;
-    cout << "Dirección: Av. Principal 123, Quito, Ecuador" << endl;
-    cout << "Teléfono: (02) 123-4567" << endl;
-    cout << "Email: info@" << nombreBanco << ".com.ec" << endl;
-    cout << "Horario de atención: Lunes a Viernes de 9:00 a 17:00" << endl;
-    cout << "Página web: www." << nombreBanco << ".com.ec" << endl;
-    
-    pausar();
-}
-
-// Función principal
-int main() {
-    // Crear instancia del banco
-    Banco miBanco("BANCO PICHINCHA VIRTUAL");
-    
-    // Variables para el flujo de programa
-    int opcion;
-    shared_ptr<Cliente> clienteActual = nullptr;
-    
-    // Crear algunos datos de prueba
-    miBanco.registrarCliente("1234567890", "Juan", "Pérez", "juan@ejemplo.com", "0987654321", "Quito", "12345");
-    miBanco.crearCuenta("1234567890", AHORROS, 1000.0);
-    miBanco.crearCuenta("1234567890", CORRIENTE, 500.0);
-    
-    miBanco.registrarCliente("0987654321", "María", "López", "maria@ejemplo.com", "0912345678", "Guayaquil", "12345");
-    miBanco.crearCuenta("0987654321", AHORROS, 2000.0);
-    
-    // Bucle principal del programa
-    while (true) {
-        if (clienteActual == nullptr) {
-            // Mostrar menú principal si no hay sesión iniciada
-            mostrarTituloBanco(miBanco.nombre);
-            opcion = mostrarMenuPrincipal();
-            
-            switch (opcion) {
-                case 1: // Iniciar sesión
-                    clienteActual = iniciarSesion(miBanco);
-                    break;
-                    
-                case 2: // Registrarse como nuevo cliente
-                    registrarNuevoCliente(miBanco);
-                    break;
-                    
-                case 3: // Información del banco
-                    mostrarInformacionBanco(miBanco.nombre);
-                    break;
-                    
-                case 0: // Salir
-                    limpiarPantalla();
-                    cout << COLOR_EXITO << "¡Gracias por utilizar el sistema de banca en línea!" << COLOR_RESET << endl;
-                    return 0;
-                    
-                default:
-                    cout << COLOR_ERROR << "Opción inválida. Intente nuevamente." << COLOR_RESET << endl;
-                    pausar();
-                    break;
-            }
-        } else {
-            // Mostrar menú del cliente si hay sesión iniciada
-            mostrarTituloBanco(miBanco.nombre);
-            opcion = mostrarMenuCliente(clienteActual->getNombreCompleto());
-            
-            switch (opcion) {
-                case 1: // Ver mis cuentas
-                    verCuentasCliente(clienteActual);
-                    break;
-                    
-                case 2: // Ver detalles de una cuenta
-                    verDetallesCuenta(clienteActual);
-                    break;
-                    
-                case 3: // Realizar depósito
-                    realizarDeposito(clienteActual);
-                    break;
-                    
-                case 4: // Realizar retiro
-                    realizarRetiro(clienteActual);
-                    break;
-                    
-                case 5: // Realizar transferencia
-                    realizarTransferencia(miBanco, clienteActual);
-                    break;
-                    
-                case 6: // Pagar servicio
-                    pagarServicio(miBanco, clienteActual);
-                    break;
-                    
-                case 7: // Solicitar nueva cuenta
-                    solicitarNuevaCuenta(miBanco, clienteActual);
-                    break;
-                    
-                case 8: // Actualizar información personal
-                    actualizarInformacionPersonal(clienteActual);
-                    break;
-                    
-                case 0: // Cerrar sesión
-                    cout << COLOR_INFO << "Sesión cerrada correctamente." << COLOR_RESET << endl;
-                    clienteActual = nullptr;
-                    pausar();
-                    break;
-                    
-                default:
-                    cout << COLOR_ERROR << "Opción inválida. Intente nuevamente." << COLOR_RESET << endl;
-                    pausar();
-                    break;
-            }
         }
     }
-    
+
     return 0;
+}
+
+void mostrarMenuCliente(Banco &banco, std::shared_ptr<Cliente> cliente)
+{
+    bool salir = false;
+
+    while (!salir)
+    {
+        std::cout << "\n===== MENÚ DE CLIENTE =====" << std::endl;
+        std::cout << "Bienvenido, " << cliente->getNombreCompleto() << std::endl;
+        std::cout << "1. Ver mis datos personales" << std::endl;
+        std::cout << "2. Ver mis cuentas" << std::endl;
+        std::cout << "3. Realizar transferencia" << std::endl;
+        std::cout << "4. Pagar servicio" << std::endl;
+        std::cout << "5. Ver historial de transacciones" << std::endl;
+        std::cout << "6. Ver gráfico de estados de cuenta" << std::endl;
+        std::cout << "7. Cambiar información personal" << std::endl;
+        std::cout << "8. Cerrar sesión" << std::endl;
+        std::cout << "Seleccione una opción: ";
+
+        std::string opcionStr;
+        std::getline(std::cin, opcionStr);
+
+        if (!validarNumero(opcionStr))
+        {
+            std::cout << "Error: Ingrese un número válido." << std::endl;
+            continue;
+        }
+
+        int opcion = std::stoi(opcionStr);
+
+        switch (opcion)
+        {
+        case 1:
+            // Ver datos personales
+            cliente->mostrarInformacion();
+            break;
+        case 2:
+            // Ver cuentas
+            cliente->mostrarCuentas();
+            break;
+        case 3:
+        {
+            // Realizar transferencia
+            std::string cuentaOrigen, cuentaDestino, montoStr, descripcion;
+
+            cliente->mostrarCuentas();
+            std::cout << "Ingrese número de cuenta origen: ";
+            std::getline(std::cin, cuentaOrigen);
+
+            auto cuenta = cliente->buscarCuentaPorNumero(cuentaOrigen);
+            if (!cuenta)
+            {
+                std::cout << "Error: Cuenta no encontrada o no le pertenece." << std::endl;
+                break;
+            }
+
+            std::cout << "Ingrese número de cuenta destino: ";
+            std::getline(std::cin, cuentaDestino);
+
+            std::cout << "Ingrese monto a transferir: ";
+            std::getline(std::cin, montoStr);
+
+            if (!validarNumero(montoStr))
+            {
+                std::cout << "Error: Monto inválido." << std::endl;
+                break;
+            }
+
+            double monto = std::stod(montoStr);
+
+            std::cout << "Ingrese descripción: ";
+            std::getline(std::cin, descripcion);
+
+            if (banco.realizarTransferencia(cuentaOrigen, cuentaDestino, monto, descripcion))
+            {
+                std::cout << "Transferencia realizada exitosamente." << std::endl;
+            }
+            break;
+        }
+        case 4:
+        {
+            // Pagar servicio
+            std::string numeroCuenta, tipoServicio, montoStr, referencia;
+
+            cliente->mostrarCuentas();
+            std::cout << "Ingrese número de cuenta: ";
+            std::getline(std::cin, numeroCuenta);
+
+            auto cuenta = cliente->buscarCuentaPorNumero(numeroCuenta);
+            if (!cuenta)
+            {
+                std::cout << "Error: Cuenta no encontrada o no le pertenece." << std::endl;
+                break;
+            }
+
+            std::cout << "Ingrese tipo de servicio (Luz, Agua, Internet, etc.): ";
+            std::getline(std::cin, tipoServicio);
+
+            std::cout << "Ingrese monto a pagar: ";
+            std::getline(std::cin, montoStr);
+
+            if (!validarNumero(montoStr))
+            {
+                std::cout << "Error: Monto inválido." << std::endl;
+                break;
+            }
+
+            double monto = std::stod(montoStr);
+
+            std::cout << "Ingrese número de referencia: ";
+            std::getline(std::cin, referencia);
+
+            if (banco.pagarServicio(numeroCuenta, tipoServicio, monto, referencia))
+            {
+                std::cout << "Pago de servicio realizado exitosamente." << std::endl;
+            }
+            break;
+        }
+        case 5:
+        {
+            // Ver historial de transacciones
+            std::string numeroCuenta;
+
+            cliente->mostrarCuentas();
+            std::cout << "Ingrese número de cuenta para ver historial: ";
+            std::getline(std::cin, numeroCuenta);
+
+            auto cuenta = cliente->buscarCuentaPorNumero(numeroCuenta);
+            if (cuenta)
+            {
+                cuenta->mostrarHistorialTransacciones();
+            }
+            else
+            {
+                std::cout << "Error: Cuenta no encontrada o no le pertenece." << std::endl;
+            }
+            break;
+        }
+        case 6:
+        {
+            // Ver gráfico de estados de cuenta
+            std::string numeroCuenta;
+
+            cliente->mostrarCuentas();
+            std::cout << "Ingrese número de cuenta para ver gráfico: ";
+            std::getline(std::cin, numeroCuenta);
+
+            auto cuenta = cliente->buscarCuentaPorNumero(numeroCuenta);
+            if (cuenta)
+            {
+                banco.mostrarGraficoEstadoCuenta(numeroCuenta);
+            }
+            else
+            {
+                std::cout << "Error: Cuenta no encontrada o no le pertenece." << std::endl;
+            }
+            break;
+        }
+        case 7:
+        {
+            // Cambiar información personal
+            bool salirSubMenu = false;
+
+            while (!salirSubMenu)
+            {
+                std::cout << "\n=== CAMBIAR INFORMACIÓN PERSONAL ===" << std::endl;
+                std::cout << "1. Cambiar correo electrónico" << std::endl;
+                std::cout << "2. Cambiar teléfono" << std::endl;
+                std::cout << "3. Cambiar dirección" << std::endl;
+                std::cout << "4. Cambiar contraseña" << std::endl;
+                std::cout << "5. Volver al menú principal" << std::endl;
+                std::cout << "Seleccione una opción: ";
+
+                std::string subOpcionStr;
+                std::getline(std::cin, subOpcionStr);
+
+                if (!validarNumero(subOpcionStr))
+                {
+                    std::cout << "Error: Ingrese un número válido." << std::endl;
+                    continue;
+                }
+
+                int subOpcion = std::stoi(subOpcionStr);
+
+                switch (subOpcion)
+                {
+                case 1:
+                {
+                    std::string nuevoCorreo;
+                    std::cout << "Ingrese nuevo correo electrónico: ";
+                    std::getline(std::cin, nuevoCorreo);
+
+                    if (validarCorreo(nuevoCorreo))
+                    {
+                        cliente->setCorreo(nuevoCorreo);
+                        std::cout << "Correo actualizado exitosamente." << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "Error: Formato de correo inválido." << std::endl;
+                    }
+                    break;
+                }
+                case 2:
+                {
+                    std::string nuevoTelefono;
+                    std::cout << "Ingrese nuevo teléfono: ";
+                    std::getline(std::cin, nuevoTelefono);
+
+                    if (validarTelefono(nuevoTelefono))
+                    {
+                        cliente->setTelefono(nuevoTelefono);
+                        std::cout << "Teléfono actualizado exitosamente." << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "Error: Formato de teléfono inválido." << std::endl;
+                    }
+                    break;
+                }
+                case 3:
+                {
+                    std::string nuevaDireccion;
+                    std::cout << "Ingrese nueva dirección: ";
+                    std::getline(std::cin, nuevaDireccion);
+
+                    if (!nuevaDireccion.empty())
+                    {
+                        cliente->setDireccion(nuevaDireccion);
+                        std::cout << "Dirección actualizada exitosamente." << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "Error: La dirección no puede estar vacía." << std::endl;
+                    }
+                    break;
+                }
+                case 4:
+                {
+                    std::string contraseniaActual, nuevaContrasenia;
+                    std::cout << "Ingrese contraseña actual: ";
+                    std::getline(std::cin, contraseniaActual);
+
+                    if (cliente->verificarContrasena(contraseniaActual))
+                    {
+                        std::cout << "Ingrese nueva contraseña: ";
+                        std::getline(std::cin, nuevaContrasenia);
+
+                        if (nuevaContrasenia.length() >= 6)
+                        {
+                            cliente->setContrasena(nuevaContrasenia);
+                            std::cout << "Contraseña actualizada exitosamente." << std::endl;
+                        }
+                        else
+                        {
+                            std::cout << "Error: La contraseña debe tener al menos 6 caracteres." << std::endl;
+                        }
+                    }
+                    else
+                    {
+                        std::cout << "Error: Contraseña actual incorrecta." << std::endl;
+                    }
+                    break;
+                }
+                case 5:
+                    salirSubMenu = true;
+                    break;
+                default:
+                    std::cout << "Opción inválida. Intente nuevamente." << std::endl;
+                    break;
+                }
+            }
+            break;
+        }
+        case 8:
+            std::cout << "Sesión cerrada exitosamente." << std::endl;
+            salir = true;
+            break;
+        default:
+            std::cout << "Opción inválida. Intente nuevamente." << std::endl;
+            break;
+        }
+    }
+}
+
+void mostrarMenuDesarrollador(Banco &banco)
+{
+    bool salir = false;
+
+    while (!salir)
+    {
+        std::cout << "\n===== MENÚ DE DESARROLLADOR/ADMINISTRADOR =====" << std::endl;
+        std::cout << "1. Registrar nuevo cliente" << std::endl;
+        std::cout << "2. Listar todos los clientes" << std::endl;
+        std::cout << "3. Buscar cliente por cédula" << std::endl;
+        std::cout << "4. Crear cuenta para cliente" << std::endl;
+        std::cout << "5. Activar/Desactivar cliente" << std::endl;
+        std::cout << "6. Activar/Desactivar cuenta" << std::endl;
+        std::cout << "7. Crear respaldo de datos" << std::endl;
+        std::cout << "8. Estadísticas generales" << std::endl;
+        std::cout << "9. Cerrar sesión" << std::endl;
+        std::cout << "Seleccione una opción: ";
+
+        std::string opcionStr;
+        std::getline(std::cin, opcionStr);
+
+        if (!validarNumero(opcionStr))
+        {
+            std::cout << "Error: Ingrese un número válido." << std::endl;
+            continue;
+        }
+
+        int opcion = std::stoi(opcionStr);
+
+        switch (opcion)
+        {
+        case 1:
+        {
+            // Registrar nuevo cliente
+            std::string cedula, nombres, apellidos, correo, telefono, direccion, contrasena;
+
+            std::cout << "\n=== REGISTRO DE NUEVO CLIENTE ===" << std::endl;
+
+            std::cout << "Cédula: ";
+            std::getline(std::cin, cedula);
+            if (!validarCedula(cedula))
+            {
+                std::cout << "Error: Formato de cédula inválido." << std::endl;
+                break;
+            }
+
+            std::cout << "Nombres: ";
+            std::getline(std::cin, nombres);
+            if (nombres.empty())
+            {
+                std::cout << "Error: Los nombres no pueden estar vacíos." << std::endl;
+                break;
+            }
+
+            std::cout << "Apellidos: ";
+            std::getline(std::cin, apellidos);
+            if (apellidos.empty())
+            {
+                std::cout << "Error: Los apellidos no pueden estar vacíos." << std::endl;
+                break;
+            }
+
+            std::cout << "Correo electrónico: ";
+            std::getline(std::cin, correo);
+            if (!validarCorreo(correo))
+            {
+                std::cout << "Error: Formato de correo inválido." << std::endl;
+                break;
+            }
+
+            std::cout << "Teléfono: ";
+            std::getline(std::cin, telefono);
+            if (!validarTelefono(telefono))
+            {
+                std::cout << "Error: Formato de teléfono inválido." << std::endl;
+                break;
+            }
+
+            std::cout << "Dirección: ";
+            std::getline(std::cin, direccion);
+            if (direccion.empty())
+            {
+                std::cout << "Error: La dirección no puede estar vacía." << std::endl;
+                break;
+            }
+
+            std::cout << "Contraseña: ";
+            std::getline(std::cin, contrasena);
+            if (contrasena.length() < 6)
+            {
+                std::cout << "Error: La contraseña debe tener al menos 6 caracteres." << std::endl;
+                break;
+            }
+
+            if (banco.registrarCliente(cedula, nombres, apellidos, correo, telefono, direccion, contrasena))
+            {
+                std::cout << "Cliente registrado exitosamente." << std::endl;
+            }
+            break;
+        }
+        case 2:
+            // Listar todos los clientes
+            banco.listarClientes();
+            break;
+        case 3:
+        {
+            // Buscar cliente por cédula
+            std::string cedula;
+            std::cout << "Ingrese la cédula del cliente a buscar: ";
+            std::getline(std::cin, cedula);
+
+            auto cliente = banco.buscarClientePorCedula(cedula);
+            if (cliente)
+            {
+                cliente->mostrarInformacion();
+                cliente->mostrarCuentas();
+            }
+            else
+            {
+                std::cout << "Cliente no encontrado." << std::endl;
+            }
+            break;
+        }
+        case 4:
+        {
+            // Crear cuenta para cliente
+            std::string cedula, tipoStr, saldoInicialStr;
+
+            std::cout << "Ingrese la cédula del cliente: ";
+            std::getline(std::cin, cedula);
+
+            auto cliente = banco.buscarClientePorCedula(cedula);
+            if (!cliente)
+            {
+                std::cout << "Cliente no encontrado." << std::endl;
+                break;
+            }
+
+            std::cout << "Tipo de cuenta (1: Ahorros, 2: Corriente): ";
+            std::getline(std::cin, tipoStr);
+
+            if (!validarNumero(tipoStr) || (stoi(tipoStr) != 1 && stoi(tipoStr) != 2))
+            {
+                std::cout << "Error: Tipo de cuenta inválido." << std::endl;
+                break;
+            }
+
+            TipoCuenta tipo = (stoi(tipoStr) == 1) ? AHORROS : CORRIENTE;
+
+            std::cout << "Saldo inicial: ";
+            std::getline(std::cin, saldoInicialStr);
+
+            if (!validarNumero(saldoInicialStr) || stod(saldoInicialStr) < 0)
+            {
+                std::cout << "Error: Saldo inicial inválido." << std::endl;
+                break;
+            }
+
+            double saldoInicial = stod(saldoInicialStr);
+
+            if (banco.crearCuenta(cedula, tipo, saldoInicial))
+            {
+                std::cout << "Cuenta creada exitosamente." << std::endl;
+            }
+            break;
+        }
+        case 5:
+        {
+            // Activar/Desactivar cliente
+            std::string cedula, opcionStr;
+
+            std::cout << "Ingrese la cédula del cliente: ";
+            std::getline(std::cin, cedula);
+
+            auto cliente = banco.buscarClientePorCedula(cedula);
+            if (!cliente)
+            {
+                std::cout << "Cliente no encontrado." << std::endl;
+                break;
+            }
+
+            std::cout << "Cliente: " << cliente->getNombreCompleto() << std::endl;
+            std::cout << "Estado actual: " << (cliente->isActivo() ? "Activo" : "Inactivo") << std::endl;
+            std::cout << "¿Desea " << (cliente->isActivo() ? "desactivar" : "activar") << " el cliente? (1: Sí, 2: No): ";
+            std::getline(std::cin, opcionStr);
+
+            if (!validarNumero(opcionStr) || (stoi(opcionStr) != 1 && stoi(opcionStr) != 2))
+            {
+                std::cout << "Opción inválida." << std::endl;
+                break;
+            }
+
+            if (stoi(opcionStr) == 1)
+            {
+                if (cliente->isActivo())
+                {
+                    cliente->desactivar();
+                    std::cout << "Cliente desactivado exitosamente." << std::endl;
+                }
+                else
+                {
+                    cliente->activar();
+                    std::cout << "Cliente activado exitosamente." << std::endl;
+                }
+            }
+            break;
+        }
+        case 6:
+        {
+            // Activar/Desactivar cuenta
+            std::string numeroCuenta, opcionStr;
+
+            std::cout << "Ingrese el número de cuenta: ";
+            std::getline(std::cin, numeroCuenta);
+
+            auto cuenta = banco.buscarCuentaPorNumero(numeroCuenta);
+            if (!cuenta)
+            {
+                std::cout << "Cuenta no encontrada." << std::endl;
+                break;
+            }
+
+            std::cout << "Cuenta: " << cuenta->getNumeroCuenta() << std::endl;
+            std::cout << "Estado actual: " << (cuenta->isActiva() ? "Activa" : "Inactiva") << std::endl;
+            std::cout << "¿Desea " << (cuenta->isActiva() ? "desactivar" : "activar") << " la cuenta? (1: Sí, 2: No): ";
+            std::getline(std::cin, opcionStr);
+
+            if (!validarNumero(opcionStr) || (stoi(opcionStr) != 1 && stoi(opcionStr) != 2))
+            {
+                std::cout << "Opción inválida." << std::endl;
+                break;
+            }
+
+            if (stoi(opcionStr) == 1)
+            {
+                if (cuenta->isActiva())
+                {
+                    cuenta->desactivar();
+                    std::cout << "Cuenta desactivada exitosamente." << std::endl;
+                }
+                else
+                {
+                    cuenta->activar();
+                    std::cout << "Cuenta activada exitosamente." << std::endl;
+                }
+            }
+            break;
+        }
+        case 7:
+        {
+            // Crear respaldo de datos
+            std::string tipoArchivo;
+            std::cout << "Tipo de respaldo (1: TXT, 2: CSV): ";
+            std::getline(std::cin, tipoArchivo);
+
+            if (!validarNumero(tipoArchivo) || (stoi(tipoArchivo) != 1 && stoi(tipoArchivo) != 2))
+            {
+                std::cout << "Opción inválida." << std::endl;
+                break;
+            }
+
+            std::string extension = (stoi(tipoArchivo) == 1) ? "txt" : "csv";
+
+            if (crearRespaldo(banco, extension))
+            {
+                std::cout << "Respaldo creado exitosamente." << std::endl;
+            }
+            break;
+        }
+        case 8:
+            // Estadísticas generales
+            banco.mostrarEstadisticas();
+            break;
+        case 9:
+            std::cout << "Sesión cerrada exitosamente." << std::endl;
+            salir = true;
+            break;
+        default:
+            std::cout << "Opción inválida. Intente nuevamente." << std::endl;
+            break;
+        }
+    }
+}
+
+// Implementación de funciones auxiliares
+
+bool validarNumero(const std::string &str)
+{
+    if (str.empty())
+    {
+        return false;
+    }
+
+    size_t i = 0;
+    if (str[0] == '-' || str[0] == '+')
+    {
+        i = 1;
+        if (str.size() == 1)
+        {
+            return false;
+        }
+    }
+
+    bool puntoEncontrado = false;
+
+    for (; i < str.size(); ++i)
+    {
+        if (str[i] == '.' && !puntoEncontrado)
+        {
+            puntoEncontrado = true;
+        }
+        else if (!isdigit(str[i]))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool validarCedula(const std::string &cedula)
+{
+    // Validación básica: solo números y longitud adecuada
+    if (cedula.empty() || cedula.length() < 5 || cedula.length() > 15)
+    {
+        return false;
+    }
+
+    for (char c : cedula)
+    {
+        if (!isdigit(c))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool validarCorreo(const std::string &correo)
+{
+    // Validación básica: debe contener @ y un punto después
+    size_t posArroba = correo.find('@');
+    if (posArroba == std::string::npos || posArroba == 0)
+    {
+        return false;
+    }
+
+    size_t posPunto = correo.find('.', posArroba);
+    if (posPunto == std::string::npos || posPunto == correo.length() - 1)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool validarTelefono(const std::string &telefono)
+{
+    // Validación básica: solo números y longitud adecuada
+    if (telefono.empty() || telefono.length() < 7 || telefono.length() > 15)
+    {
+        return false;
+    }
+
+    for (char c : telefono)
+    {
+        if (!isdigit(c) && c != '+' && c != '-' && c != ' ')
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool crearRespaldo(const Banco &banco, const std::string &tipoArchivo)
+{
+    std::string nombreArchivo = "respaldo_" + std::to_string(time(nullptr)) + "." + tipoArchivo;
+
+    return banco.guardarRespaldo(nombreArchivo, tipoArchivo);
 }
