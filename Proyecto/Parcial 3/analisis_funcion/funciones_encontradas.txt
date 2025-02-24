@@ -1,0 +1,8 @@
+suma
+resta
+multiplicacion
+division
+suma_parametrizada
+resta_parametrizada
+multiplicacion_parametrizada
+division_parametrizada
