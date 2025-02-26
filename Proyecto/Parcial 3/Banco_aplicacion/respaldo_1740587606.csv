@@ -1,0 +1,2 @@
+Tipo,Cédula,Nombres,Apellidos,Correo,Teléfono,Estado,NumeroCuenta,TipoCuenta,Saldo,EstadoCuenta
+CLIENTE,2300684459,f,ff,papqa@gmail.com,0997807114  ,Inactivo,1000001001,AHORROS,100,Activa
