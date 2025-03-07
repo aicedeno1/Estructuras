@@ -1,0 +1,5 @@
+9999999999;Administrador;Sistema;Administración ESPE;0000000000;admin@banco.espe.edu.ec;01-01-1990;admin;0305030a0174616364;ADMIN
+1104589880;Stiven;Diaz;Salcedo;0969031049;tiven2@gmail.com;23-06-2004;vonchero;340e005b0b2c353f2b4155;CLIENTE
+1709626582;Hernan;DIaz;Salcedo;0969031048;hernancito@gmail.com;05-12-2003;Hernan1;2a041c0d0e2b6262;CLIENTE
+0503622847;Erich;Nickelsen;salcedo;0999851271;stivenhernan11@gmail.com;23-06-2004;Erich;271307000774;CLIENTE
+2300684459;Andres;Promiscuo;sangolqui;0997807114;cednsduasd@gmail.com;23-12-6;Cedenio;21040a06012c3c617701;CLIENTE

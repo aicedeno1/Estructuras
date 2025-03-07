@@ -1,0 +1,35 @@
+[00:00:03] DESACTIVAR_CUENTAS_CLIENTE - Cédula: 1709626582, Nombre: Segundo iaz, Cuentas desactivadas: 1
+[06:29:13] REGISTRO_CLIENTE_CUENTA - Cédula: 2300684459, Nombre: dsd ccede ddd, Cuenta: 202557390585
+[06:31:37] REGISTRO_CLIENTE_CUENTA - Cédula: 2222222222, Nombre: andres cedenio, Cuenta: 202599163577
+[06:43:47] DESACTIVAR_CUENTAS_CLIENTE - Cédula: 2300684459, Nombre: dsd ccede ddd, Cuentas desactivadas: 1
+[06:51:18] REGISTRO_CLIENTE_CUENTA - Cédula: 2300684459, Nombre: andres cedenio, Cuenta: 202520533520
+[06:53:03] REGISTRO_CLIENTE_CUENTA - Cédula: 2300684459, Nombre: andres cedenio, Cuenta: 202519906743
+[06:54:51] REGISTRO_CLIENTE_CUENTA - Cédula: 2222222222, Nombre: andres cedenio, Cuenta: 202503048926
+[07:04:02] REGISTRO_CLIENTE_CUENTA - Cédula: 2300684459, Nombre: andres cedenio, Cuenta: 202595805287
+[07:05:35] REGISTRO_CLIENTE_CUENTA - Cédula: 2222222222, Nombre: andres cedenio, Cuenta: 202507243298
+[07:07:00] EDITAR_CLIENTE - Cédula: 2300684459, Nuevo Nombre: epe
+[07:07:55] EDITAR_CLIENTE - Cédula: 2300684459, Nuevo Apellido: epeda
+[07:08:03] EDITAR_CLIENTE - Cédula: 2300684459, Nueva Dirección
+[07:08:18] EDITAR_CLIENTE - Cédula: 2300684459, Nuevo Teléfono: 988888888
+[07:08:37] EDITAR_CLIENTE - Cédula: 2300684459, Nuevo Email: ndr@gmai
+[07:21:49] EDITAR_CLIENTE - Cédula: 2300684459, Nuevo Nombre: andres
+[07:21:59] EDITAR_CLIENTE - Cédula: 2300684459, Nuevo Apellido: cedenio
+[07:22:20] EDITAR_CLIENTE - Cédula: 2300684459, Nueva Dirección
+[07:22:42] EDITAR_CLIENTE - Cédula: 2300684459, Nuevo Teléfono: 0997807114
+[07:23:04] EDITAR_CLIENTE - Cédula: 2300684459, Nuevo Email: andres@gmail.com
+[07:35:20] REGISTRO_CLIENTE_CUENTA - Cédula: 1104589880, Nombre: pepe pepe, Cuenta: 202547987376
+[07:37:47] DESACTIVAR_CUENTAS_CLIENTE - Cédula: 2300684459, Nombre: andres cedenio, Cuentas desactivadas: 4
+[07:38:29] CREAR_CUENTA_ADICIONAL - Número: 202516406768, Tipo: Ahorro, Titular: andres cedenio
+[07:59:40] REGISTRO_CLIENTE_CUENTA - Cédula: 2300684459, Nombre: andres cedenio, Cuenta: 202557390585
+[08:01:29] GENERAR_QR_TRANSFERENCIA - Cuenta: 202557390585, Monto Sugerido: $0.000000, Cliente: andres cedenio
+[08:03:13] EDITAR_CLIENTE - Cédula: 2300684459, Nuevo Nombre: gdg
+[08:03:17] EDITAR_CLIENTE - Cédula: 2300684459, Nuevo Apellido: dgg
+[08:09:32] REGISTRO_CLIENTE_CUENTA - Cédula: 2222222222, Nombre: andres cedenio, Cuenta: 202599163577
+[08:11:11] TRANSFERENCIA - Cuenta Origen: 202599163577, Cuenta Destino: 202557390585, Monto: $40.000000, Cliente: andres cedenio
+[08:41:20] DEPOSITO - Cuenta: 202557390585, Monto: $22.220000, Cliente: gdg dgg
+[09:14:27] REGISTRO_CLIENTE_CUENTA - Cédula: 2300684459, Nombre: andres cedenio, Cuenta: 202520533520
+[09:21:53] CREAR_CUENTA_ADICIONAL - Número: 202519906743, Tipo: Ahorro, Titular: andres cedenio
+[11:23:46] REGISTRO_CLIENTE_CUENTA - Cédula: 2300684459, Nombre: pepe sales, Cuenta: 202557390585
+[11:43:48] REGISTRO_CLIENTE_CUENTA - Cédula: 1104589880, Nombre: stiven dias, Cuenta: 202520533520
+[11:46:05] REGISTRO_CLIENTE_CUENTA - Cédula: 1101160032, Nombre: maria lovato, Cuenta: 202519906743
+[12:24:11] REGISTRO_CLIENTE_CUENTA - Cédula: 1803005071, Nombre: juan perez, Cuenta: 202503048926

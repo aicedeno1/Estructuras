@@ -1,0 +1,3 @@
+9999999999;Administrador;Sistema;N/A;N/A;admin@banco.com;01-01-1990;admin;2305030a01746163;ADMIN
+1104589880;tivoncho;Da234fs;Salcedo;0969031048;stivenhernan1258@gmail.com;23-06-2004;Voncho23;140e00000720213f;CLIENTE
+1709626582;hernan;Diaz;Salcedo;0984969719;herhfsd;12-06-2005;Herni;140e005a0b2c353f2b4155;CLIENTE

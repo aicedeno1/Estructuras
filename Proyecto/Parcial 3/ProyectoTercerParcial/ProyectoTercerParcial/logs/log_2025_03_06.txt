@@ -1,0 +1,33 @@
+[17:26:19] REGISTRO_CLIENTE_CUENTA - Cédula: 1104589880, Nombre: Stiven Diaz, Cuenta: 202576008021
+[17:28:32] CREAR_CUENTA_ADICIONAL - Número: 202563688068, Tipo: Ahorro, Titular: Stiven Diaz
+[17:28:50] CREAR_BACKUP_COMPLETO - Fecha: 2025_03_06_17_28_50
+[17:30:57] EDITAR_CLIENTE - Cédula: 1104589880, Nuevo Apellido: Diaz
+[17:31:02] EDITAR_CLIENTE - Cédula: 1104589880, Nueva Dirección
+[17:33:49] ELIMINAR_CLIENTE_Y_CUENTAS - Cédula: 1104589880, Nombre: Stiven Diaz, Cuentas eliminadas: 0
+[18:53:03] REGISTRO_CLIENTE_CUENTA - Cédula: 1104589880, Nombre: Stiven  Diaz, Cuenta: 202537025041
+[18:53:59] ELIMINAR_CLIENTE_Y_CUENTAS - Cédula: 1104589880, Nombre: Stiven  Diaz, Cuentas eliminadas: 1
+[19:01:56] REGISTRO_CLIENTE_CUENTA - Cédula: 1104589880, Nombre: Stiven Diaz, Cuenta: 202505269487
+[19:12:13] REGISTRO_CLIENTE_CUENTA - Cédula: 1709626582, Nombre: Hernan DIaz, Cuenta: 202506488751
+[19:15:18] CAMBIAR_PASSWORD - Usuario: Hernan1
+[19:17:41] EDITAR_CLIENTE - Cédula: 1104589880, Nuevo Email: tiven2@gmail.com
+[19:19:18] CREAR_CUENTA_ADICIONAL - Número: 202524034224, Tipo: Ahorro, Titular: Hernan DIaz
+[19:29:36] REGISTRO_CLIENTE_CUENTA - Cédula: 0503622847, Nombre: Erich Nickelsen, Cuenta: 202540306095
+[19:31:12] CREAR_CUENTA_ADICIONAL - Número: 202537288895, Tipo: Ahorro, Titular: Erich Nickelsen
+[20:42:18] REGISTRO_CLIENTE_CUENTA - Cédula: 2300684459, Nombre: Andres Promiscuo, Cuenta: 202535623857
+[20:47:36] CREAR_BACKUP_COMPLETO - Fecha: 2025_03_06_20_47_36
+[20:55:35] CAMBIAR_PASSWORD - Usuario: vonchero
+[20:55:55] EDITAR_CLIENTE - Cédula: 1104589880, Nuevo Nombre: Voncho
+[21:11:07] RESTAURAR_BACKUP_CUENTAS - Archivo: cuentas_2025_03_06_20_47_36.txt
+[22:39:33] REGISTRO_CLIENTE_CUENTA - Cédula: 1104589880, Nombre: Stiven Diaz, Cuenta: 202519585787
+[22:41:02] CREAR_BACKUP_COMPLETO - Fecha: 2025_03_06_22_41_02
+[22:44:24] REGISTRO_CLIENTE_CUENTA - Cédula: 1709626582, Nombre: Hernan Diaz, Cuenta: 202571428976
+[22:54:53] DEPOSITO - Cuenta: 202571428976, Monto: $3.000000, Cliente: Hernan Diaz
+[22:55:05] RETIRO - Cuenta: 202571428976, Monto: $23.000000, Cliente: Hernan Diaz
+[22:56:36] ELIMINAR_CLIENTE_Y_CUENTAS - Cédula: 1709626582, Nombre: Hernan Diaz, Cuentas eliminadas: 1
+[23:52:31] CREAR_CUENTA_ADICIONAL - Número: 202541485683, Tipo: Corriente, Titular: Stiven Diaz
+[23:54:19] REGISTRO_CLIENTE_CUENTA - Cédula: 1709626582, Nombre: Hernan Diaz, Cuenta: 202501054071
+[23:55:13] RETIRO - Cuenta: 202501054071, Monto: $324.000000, Cliente: Hernan Diaz
+[23:55:41] GENERAR_QR_TRANSFERENCIA - Cuenta: 202501054071, Monto Sugerido: $12.000000, Cliente: Hernan Diaz
+[23:56:19] CAMBIAR_PASSWORD - Usuario: hernan
+[23:56:25] EDITAR_CLIENTE - Cédula: 1709626582, Nuevo Nombre: Segundo
+[23:57:12] EDITAR_CLIENTE - Cédula: 1709626582, Nuevo Apellido: iaz

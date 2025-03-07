@@ -1,0 +1,6 @@
+[00:15:08] AGREGAR_CLIENTE - Cédula: 1104589880, Nombre: Stiven Da234fs
+[22:34:38] AGREGAR_CLIENTE - Cédula: 1709626582, Nombre: hernan Diaz
+[22:59:51] EDITAR_CLIENTE - Cédula: 1104589880, Nuevo Nombre: tivoncho
+[23:02:01] CREAR_BACKUP_COMPLETO - Fecha: 2025_03_04_23_02_01
+[23:02:06] RESTAURAR_BACKUP_CUENTAS - Archivo: cuentas_2025_03_04_23_02_01.txt
+[23:09:22] CREAR_CUENTA - Número: 202517409488, Tipo: Ahorro, Titular: tivoncho Da234fs

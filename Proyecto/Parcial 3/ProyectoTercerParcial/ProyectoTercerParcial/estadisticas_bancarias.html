@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estadísticas Bancarias</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; color: #333; }
+        .container { width: 90%; max-width: 1200px; margin: 20px auto; background-color: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; }
+        .header { background-color: #003366; color: white; padding: 15px; margin-bottom: 20px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .header-info { font-size: 14px; }
+        .chart-container { margin: 30px 0; padding: 20px; border: 1px solid #eee; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        h2 { color: #003366; border-bottom: 2px solid #003366; padding-bottom: 10px; margin-top: 30px; }
+        .btn { display: inline-block; padding: 10px 15px; background-color: #003366; color: white; text-decoration: none; border-radius: 4px; cursor: pointer; }
+        .btn:hover { background-color: #004080; }
+        .footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container" id="capture">
+        <div class="header">
+            <h1>Estadísticas del Sistema Bancario</h1>
+            <div class="header-info">Reporte generado el 07/03/2025</div>
+        </div>
+        <p>Este reporte muestra un análisis detallado de las cuentas y transacciones del sistema bancario.</p>
+        <h2>Transacciones Mensuales</h2>
+        <div class="chart-container">
+            <canvas id="transaccionesChart"></canvas>
+        </div>
+        <h2>Distribución de Tipos de Cuenta</h2>
+        <div class="chart-container">
+            <canvas id="cuentasChart"></canvas>
+        </div>
+        <h2>Saldo Promedio por Tipo de Cuenta</h2>
+        <div class="chart-container">
+            <canvas id="saldosChart"></canvas>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn" onclick="generarPDF()">Exportar a PDF</button>
+        </div>
+        <div class="footer">
+            <p>Sistema Bancario ESPE - Desarrollado por Diaz Stiven y Cedenio Andres </p>
+        </div>
+    </div>
+    <script>
+        // Función para exportar a PDF
+        function generarPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const content = document.getElementById('capture');
+            
+            html2canvas(content, {
+                scale: 2,  // Aumentar resolución
+                useCORS: true,  // Manejar imágenes cross-origin
+                logging: false  // Desactivar logging
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const imgProps = doc.getImageProperties(imgData);
+                const pdfWidth = doc.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                
+                // Añadir primera página
+                doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                
+                // Si la imagen es más alta que una página, dividirla
+                if (pdfHeight > doc.internal.pageSize.getHeight()) {
+                    const totalPages = Math.ceil(pdfHeight / doc.internal.pageSize.getHeight());
+                    
+                    for (let page = 1; page < totalPages; page++) {
+                        doc.addPage();
+                        doc.addImage(
+                            imgData, 
+                            'PNG', 
+                            0, 
+                            -page * doc.internal.pageSize.getHeight(), 
+                            pdfWidth, 
+                            pdfHeight
+                        );
+                    }
+                }
+                
+                doc.save('estadisticas_bancarias.pdf');
+            }).catch(error => {
+                console.error('Error generando PDF:', error);
+            });
+        }
+
+        // Datos para el gráfico de transacciones mensuales
+        const ctxTransacciones = document.getElementById('transaccionesChart').getContext('2d');
+        new Chart(ctxTransacciones, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Movimientos Mensuales ($)',
+                    data: [],
+                    borderColor: '#4bc0c0',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.1,
+                    fill: true,
+                    pointBackgroundColor: '#4bc0c0',
+                    pointBorderColor: '#fff',
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Datos para el gráfico de cuentas
+        const ctxCuentas = document.getElementById('cuentasChart').getContext('2d');
+        new Chart(ctxCuentas, {
+            type: 'pie',
+            data: {
+                labels: ['Ahorro', 'Corriente', 'Plazo Fijo'],
+                datasets: [{
+                    data: [2, 1, 1],
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: false }
+                }
+            }
+        });
+
+        // Datos para el gráfico de saldos
+        const ctxSaldos = document.getElementById('saldosChart').getContext('2d');
+        new Chart(ctxSaldos, {
+            type: 'bar',
+            data: {
+                labels: ['Ahorro', 'Corriente', 'Plazo Fijo'],
+                datasets: [{
+                    label: 'Saldo Promedio ($)',
+                    data: [82.00, 32.00, 433.00],
+                    backgroundColor: '#36A2EB',
+                    borderColor: '#2980B9',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

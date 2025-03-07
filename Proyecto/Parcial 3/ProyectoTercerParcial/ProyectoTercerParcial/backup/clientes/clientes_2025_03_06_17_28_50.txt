@@ -1,0 +1,2 @@
+9999999999;Administrador;Sistema;Administración ESPE;0000000000;admin@banco.espe.edu.ec;01-01-1990;admin;0305030a0174616364;ADMIN
+1104589880;Stiven;Diaz;Salcedp;0969031049;ativenhernan1258@gmail.om;23-06-2004;voncho23;140e005a0b2c353f2b4155;CLIENTE

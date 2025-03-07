@@ -1,0 +1,1 @@
+9999999999;Administrador;Sistema;Administración ESPE;0000000000;admin@banco.espe.edu.ec;01-01-1990;admin;0305030a0174616364;ADMIN
